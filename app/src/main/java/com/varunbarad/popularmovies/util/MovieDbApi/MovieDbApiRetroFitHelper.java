@@ -1,4 +1,4 @@
-package com.varunbarad.popularmovies.util;
+package com.varunbarad.popularmovies.util.MovieDbApi;
 
 import com.varunbarad.popularmovies.model.data.MovieList;
 
@@ -12,9 +12,8 @@ import retrofit2.http.Query;
  * Project: PopularMovies
  */
 
-public interface MovieDbApi {
+public interface MovieDbApiRetroFitHelper {
   String baseUrl = "https://api.themoviedb.org/";
-  String baseUrlImage = "https://image.tmdb.org/t/p/";
 
   @GET("/3/discover/movie?sort_by=popularity.desc&vote_count.gte=50")
   Call<MovieList> getPopularMovies(@Query("page") long page, @Query("api_key") String apiKey);
