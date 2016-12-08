@@ -8,61 +8,62 @@ import java.util.ArrayList;
 
 /**
  * Creator: vbarad
- * Date: 2016-11-24
+ * Date: 2016-12-08
  * Project: PopularMovies
  */
 
-public final class MovieList {
+public final class ReviewList {
   @Expose
   @SerializedName("page")
   private long page;
   @Expose
   @SerializedName("results")
-  private ArrayList<MovieStub> results;
-  @Expose
-  @SerializedName("total_results")
-  private long totalResults;
+  private ArrayList<ReviewStub> reviews;
   @Expose
   @SerializedName("total_pages")
   private long totalPages;
+  @Expose
+  @SerializedName("total_results")
+  private long totalResults;
 
   /**
-   * No args contryctor for use in serialization
+   * Public no-args constructor for serialization
    */
-  public MovieList() {
+  public ReviewList() {
+
   }
 
   /**
    * @param page
-   * @param results
-   * @param totalResults
+   * @param reviews
    * @param totalPages
+   * @param totalResults
    */
-  public MovieList(long page, ArrayList<MovieStub> results, long totalResults, long totalPages) {
+  public ReviewList(final long page, final ArrayList<ReviewStub> reviews, final long totalPages, final long totalResults) {
     this.page = page;
-    this.results = results;
-    this.totalResults = totalResults;
+    this.reviews = reviews;
     this.totalPages = totalPages;
+    this.totalResults = totalResults;
   }
 
   public long getPage() {
     return page;
   }
 
-  public ArrayList<MovieStub> getResults() {
-    return results;
+  public ArrayList<ReviewStub> getReviews() {
+    return reviews;
   }
 
-  public void setResults(ArrayList<MovieStub> results) {
-    this.results = results;
-  }
-
-  public long getTotalResults() {
-    return totalResults;
+  public void setReviews(ArrayList<ReviewStub> reviews) {
+    this.reviews = reviews;
   }
 
   public long getTotalPages() {
     return totalPages;
+  }
+
+  public long getTotalResults() {
+    return totalResults;
   }
 
   @Override

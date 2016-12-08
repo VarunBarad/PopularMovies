@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Project: PopularMovies
  */
 
-public class MovieStub {
+public final class MovieStub {
   @SerializedName("poster_path")
   @Expose
   private String posterPath;

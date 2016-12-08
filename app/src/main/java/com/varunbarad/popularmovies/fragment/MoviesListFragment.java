@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.varunbarad.popularmovies.BuildConfig;
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.adapter.MoviesAdapter;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
@@ -129,7 +128,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     MovieDbApiRetroFitHelper movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper.class);
 
     movieDbApiRetroFitHelper
-        .getPopularMovies(1, BuildConfig.TMDBApiKey)
+        .getPopularMovies(1)
         .enqueue(this);
   }
 
