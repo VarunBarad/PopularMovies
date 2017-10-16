@@ -21,7 +21,7 @@ public final class MovieDetails {
   private String backdropPath;
   @Expose
   @SerializedName("belongs_to_collection")
-  private ArrayList<CollectionStub> collection;
+  private CollectionStub collection;
   @Expose
   @SerializedName("budget")
   private long budget;
@@ -143,7 +143,7 @@ public final class MovieDetails {
    * @param recommendations
    * @param similarMovies
    */
-  public MovieDetails(final boolean adult, final String backdropPath, final ArrayList<CollectionStub> collection, final long budget, final ArrayList<Genre> genres, final String homepage, final long id, final String idIMDB, final String originalLanguage, final String originalTitle, final String overview, final double popularity, final String posterPath, final ArrayList<CompanyStub> productionCompanies, final ArrayList<Country> productionCountries, final String releaseDate, final long revenue, final int runtime, final ArrayList<Language> spokenLanguages, final String status, final String tagLine, final String title, final boolean video, final double averageVote, final long numberOfVotes, final VideoList videos, final ImageList images, final ReviewList reviews, final MovieList recommendations, final MovieList similarMovies) {
+  public MovieDetails(final boolean adult, final String backdropPath, final CollectionStub collection, final long budget, final ArrayList<Genre> genres, final String homepage, final long id, final String idIMDB, final String originalLanguage, final String originalTitle, final String overview, final double popularity, final String posterPath, final ArrayList<CompanyStub> productionCompanies, final ArrayList<Country> productionCountries, final String releaseDate, final long revenue, final int runtime, final ArrayList<Language> spokenLanguages, final String status, final String tagLine, final String title, final boolean video, final double averageVote, final long numberOfVotes, final VideoList videos, final ImageList images, final ReviewList reviews, final MovieList recommendations, final MovieList similarMovies) {
     this.adult = adult;
     this.backdropPath = backdropPath;
     this.collection = collection;
@@ -183,8 +183,8 @@ public final class MovieDetails {
   public String getBackdropPath() {
     return backdropPath;
   }
-
-  public ArrayList<CollectionStub> getCollection() {
+  
+  public CollectionStub getCollection() {
     return collection;
   }
 

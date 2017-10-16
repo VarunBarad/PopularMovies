@@ -1,9 +1,12 @@
 package com.varunbarad.popularmovies.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 /**
@@ -12,7 +15,7 @@ import android.view.View;
  * Project: PopularMovies
  */
 
-public class Helper {
+public final class Helper {
   public static int getScreenWidth(View view) {
     int screenSize = view.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
     int width;
@@ -108,5 +111,23 @@ public class Helper {
     isConnected = (activeNetwork != null) && activeNetwork.isConnected();
 
     return isConnected;
+  }
+  
+  public static int convertDpToPx(Context context, int dp) {
+    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+    int px = Math.round(dp * (metrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    return px;
+  }
+  
+  public static int convertPxToDp(Context context, int px) {
+    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+    int dp = Math.round(px / (metrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    return dp;
+  }
+  
+  public static void openUrlInBrowser(String url, Context context) {
+    Uri githubUri = Uri.parse(url);
+    Intent githubIntent = new Intent(Intent.ACTION_VIEW, githubUri);
+    context.startActivity(githubIntent);
   }
 }

@@ -1,6 +1,7 @@
 package com.varunbarad.popularmovies.model.data;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -93,6 +94,12 @@ public final class MovieStub {
     this.voteCount = voteCount;
     this.video = video;
     this.voteAverage = voteAverage;
+  }
+  
+  public static MovieStub getInstance(String movieStubJson) {
+    Gson gson = new GsonBuilder().create();
+    MovieStub movieStub = gson.fromJson(movieStubJson, MovieStub.class);
+    return movieStub;
   }
 
   /**

@@ -1,6 +1,7 @@
 package com.varunbarad.popularmovies.fragment;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.adapter.MoviesAdapter;
+import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.model.data.MovieList;
@@ -31,10 +33,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MoviesListFragment extends Fragment implements ListItemClickListener, Callback<MovieList> {
   private OnFragmentInteractionListener fragmentInteractionListener;
+  
+  private FragmentMoviesListBinding dataBinding;
 
-  private View rootView;
-
-  private RecyclerView moviesRecyclerView;
   private RecyclerView.LayoutManager moviesLayoutManager;
   private MoviesAdapter moviesAdapter;
 
@@ -82,28 +83,25 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    this.rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
-
-    this.moviesRecyclerView = (RecyclerView) this.rootView.findViewById(R.id.recyclerView_movies);
-    this.moviesRecyclerView.setHasFixedSize(true);
+    this.dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_list, container, false);
+  
+    this.dataBinding.recyclerViewMovies.setHasFixedSize(true);
 
     this.moviesLayoutManager = new GridLayoutManager(this.getContext(), 2, LinearLayoutManager.VERTICAL, false);
-    this.moviesRecyclerView.setLayoutManager(this.moviesLayoutManager);
+    this.dataBinding.recyclerViewMovies.setLayoutManager(this.moviesLayoutManager);
 
     if (Helper.isConnectedToInternet(this.getContext())) {
       this.fetchPopularMovies();
     } else {
-      this.rootView
-          .findViewById(R.id.placeholder_progress)
+      this.dataBinding.placeholderProgress
           .setVisibility(View.GONE);
-      this.moviesRecyclerView
+      this.dataBinding.recyclerViewMovies
           .setVisibility(View.GONE);
-      this.rootView
-          .findViewById(R.id.placeHolder_error)
+      this.dataBinding.placeHolderError
           .setVisibility(View.VISIBLE);
     }
-
-    return this.rootView;
+  
+    return this.dataBinding.getRoot();
   }
 
   @Override
@@ -115,7 +113,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
                 .moviesAdapter
                 .getMovies()
                 .get(position)
-                .getTitle()
+                .toString()
         );
   }
 
@@ -135,27 +133,24 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   @Override
   public void onResponse(Call<MovieList> call, Response<MovieList> response) {
     this.moviesAdapter = new MoviesAdapter(response.body().getResults(), this);
-    this.moviesRecyclerView.setAdapter(this.moviesAdapter);
-    this.rootView
-        .findViewById(R.id.placeholder_progress)
+    this.dataBinding.recyclerViewMovies.setAdapter(this.moviesAdapter);
+    this.dataBinding.placeholderProgress
         .setVisibility(View.GONE);
-    this.moviesRecyclerView
+    this.dataBinding.recyclerViewMovies
         .setVisibility(View.VISIBLE);
   }
 
   @Override
   public void onFailure(Call<MovieList> call, Throwable t) {
-    this.rootView
-        .findViewById(R.id.placeholder_progress)
+    this.dataBinding.placeholderProgress
         .setVisibility(View.GONE);
-    this.moviesRecyclerView
+    this.dataBinding.recyclerViewMovies
         .setVisibility(View.GONE);
-    this.rootView
-        .findViewById(R.id.placeHolder_error)
+    this.dataBinding.placeHolderError
         .setVisibility(View.VISIBLE);
 
     Snackbar
-        .make(this.rootView, "Network Error", Snackbar.LENGTH_SHORT)
+        .make(this.dataBinding.getRoot(), "Network Error", Snackbar.LENGTH_SHORT)
         .show();
   }
 }
