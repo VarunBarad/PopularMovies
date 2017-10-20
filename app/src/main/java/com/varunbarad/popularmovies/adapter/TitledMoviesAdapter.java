@@ -1,12 +1,12 @@
 package com.varunbarad.popularmovies.adapter;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
@@ -38,15 +38,12 @@ public class TitledMoviesAdapter extends RecyclerView.Adapter<TitledMoviesAdapte
   
   @Override
   public TitledMoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    RelativeLayout movieItem = (RelativeLayout)
+    ConstraintLayout movieItem = (ConstraintLayout)
         LayoutInflater
             .from(parent.getContext())
             .inflate(R.layout.list_item_recycler_view_movie_details_movies, parent, false);
-    
-    AppCompatImageView movieImage = (AppCompatImageView) movieItem.findViewById(R.id.imageView_listItemMovieDetailsMovies_poster);
-    AppCompatTextView movieTitle = (AppCompatTextView) movieItem.findViewById(R.id.textView_listItemMovieDetailsMovies_title);
-    
-    TitledMoviesAdapter.ViewHolder viewHolder = new TitledMoviesAdapter.ViewHolder(movieImage, movieTitle, this);
+  
+    TitledMoviesAdapter.ViewHolder viewHolder = new TitledMoviesAdapter.ViewHolder(movieItem, this);
     return viewHolder;
   }
   
@@ -88,11 +85,11 @@ public class TitledMoviesAdapter extends RecyclerView.Adapter<TitledMoviesAdapte
     private AppCompatImageView imageViewMoviePoster;
     private AppCompatTextView textViewMovieTitle;
     private TitledMoviesAdapter adapter;
-    
-    public ViewHolder(AppCompatImageView imageViewMoviePoster, AppCompatTextView textViewMovieTitle, TitledMoviesAdapter adapter) {
-      super(imageViewMoviePoster);
-      this.imageViewMoviePoster = imageViewMoviePoster;
-      this.textViewMovieTitle = textViewMovieTitle;
+  
+    public ViewHolder(ConstraintLayout movieItem, TitledMoviesAdapter adapter) {
+      super(movieItem);
+      this.imageViewMoviePoster = (AppCompatImageView) movieItem.findViewById(R.id.imageView_listItemMovieDetailsMovies_poster);
+      this.textViewMovieTitle = (AppCompatTextView) movieItem.findViewById(R.id.textView_listItemMovieDetailsMovies_title);
       this.adapter = adapter;
       this.imageViewMoviePoster.setOnClickListener(this);
     }

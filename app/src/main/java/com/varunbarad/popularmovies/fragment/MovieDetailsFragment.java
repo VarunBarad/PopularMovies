@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
+import com.varunbarad.popularmovies.activity.MovieDetailsActivity;
 import com.varunbarad.popularmovies.adapter.GenreAdapter;
+import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
@@ -190,23 +192,40 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         Toast.makeText(getContext(), String.format(Locale.getDefault(), "%s selected", movie.getGenres().get(position).getName()), Toast.LENGTH_SHORT).show();
       }
     }));
-
-        /*this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setHasFixedSize(true);
-        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setNestedScrollingEnabled(false);
-        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setLayoutManager(new LinearLayoutManager(
-                this.dataBinding.recyclerViewMovieDetailsSimilarMovies.getContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false
-        ));
-        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setAdapter(new TitledMoviesAdapter(
-                movie.getSimilarMovies().getResults(),
-                new ListItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        MovieDetailsActivity.startActivity(getActivity(), movie.getSimilarMovies().getResults().get(position));
-                    }
-                }
-        ));*/
+  
+    this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setHasFixedSize(true);
+    this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setNestedScrollingEnabled(false);
+    this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setLayoutManager(new LinearLayoutManager(
+        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.getContext(),
+        LinearLayoutManager.HORIZONTAL,
+        false
+    ));
+    this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setAdapter(new TitledMoviesAdapter(
+        movie.getSimilarMovies().getResults(),
+        new ListItemClickListener() {
+          @Override
+          public void onItemClick(int position) {
+            MovieDetailsActivity.startActivity(getActivity(), movie.getSimilarMovies().getResults().get(position));
+          }
+        }
+    ));
+  
+    this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setHasFixedSize(true);
+    this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setNestedScrollingEnabled(false);
+    this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setLayoutManager(new LinearLayoutManager(
+        this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.getContext(),
+        LinearLayoutManager.HORIZONTAL,
+        false
+    ));
+    this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setAdapter(new TitledMoviesAdapter(
+        movie.getRecommendations().getResults(),
+        new ListItemClickListener() {
+          @Override
+          public void onItemClick(int position) {
+            MovieDetailsActivity.startActivity(getActivity(), movie.getRecommendations().getResults().get(position));
+          }
+        }
+    ));
   }
   
   @Override
