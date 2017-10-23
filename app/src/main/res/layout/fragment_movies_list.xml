@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:foregroundGravity="center"
-                android:tint="@color/iconGrey"
+                android:tint="@color/colorIcon"
                 app:srcCompat="@drawable/ic_cloud_off_black"/>
 
             <android.support.v4.widget.Space

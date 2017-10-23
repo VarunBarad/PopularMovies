@@ -58,7 +58,7 @@ public final class Helper {
     }
     return width;
   }
-
+  
   public static int getScreenHeight(View view) {
     int screenSize = view.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
     int height;
@@ -101,15 +101,15 @@ public final class Helper {
     }
     return height;
   }
-
+  
   public static boolean isConnectedToInternet(Context context) {
     ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-
+    
     boolean isConnected;
-
+    
     isConnected = (activeNetwork != null) && activeNetwork.isConnected();
-
+    
     return isConnected;
   }
   
@@ -126,8 +126,18 @@ public final class Helper {
   }
   
   public static void openUrlInBrowser(String url, Context context) {
-    Uri githubUri = Uri.parse(url);
-    Intent githubIntent = new Intent(Intent.ACTION_VIEW, githubUri);
-    context.startActivity(githubIntent);
+    Uri websiteUri = Uri.parse(url);
+    Intent websiteIntent = new Intent(Intent.ACTION_VIEW, websiteUri);
+    if (websiteIntent.resolveActivity(context.getPackageManager()) != null) {
+      context.startActivity(websiteIntent);
+    }
+  }
+  
+  public static void openYouTubeVideo(String videoUrl, Context context) {
+    Uri videoUri = Uri.parse(videoUrl);
+    Intent videoIntent = new Intent(Intent.ACTION_VIEW, videoUri);
+    if (videoIntent.resolveActivity(context.getPackageManager()) != null) {
+      context.startActivity(videoIntent);
+    }
   }
 }

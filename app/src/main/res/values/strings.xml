@@ -4,9 +4,12 @@
     <string name="label_adult_only">Adults Only</string>
     <string name="label_runtime">Runtime</string>
     <string name="label_reviews">Reviews</string>
-    <string name="label_visit_website">Visit website</string>
+    <string name="label_visit_website">Website</string>
+    <string name="label_view_videos">Videos</string>
     <string name="label_overview">Overview</string>
     <string name="label_you_may_also_like">You may also like</string>
     <string name="label_similar">Similar Movies</string>
     <string name="label_releases_on">Releases on</string>
+    <string name="label_more">More</string>
+    <string name="label_ok">OK</string>
 </resources>

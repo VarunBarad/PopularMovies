@@ -13,20 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.activity.MovieDetailsActivity;
 import com.varunbarad.popularmovies.adapter.GenreAdapter;
+import com.varunbarad.popularmovies.adapter.ReviewAdapter;
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.model.data.MovieDetails;
 import com.varunbarad.popularmovies.model.data.MovieStub;
+import com.varunbarad.popularmovies.model.data.Video;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -159,21 +163,61 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   }
   
   private void fillDetails(final MovieDetails movie) {
-    this.dataBinding.textViewMovieDetailsOverview.setText(movie.getOverview());
-    
-    this.dataBinding.textViewMovieDetailsRuntime.setText(String.valueOf(movie.getRuntime()));
-    
-    this.dataBinding.linearLayoutMovieDetailsAdult.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-    
-    this.dataBinding.linearLayoutMovieDetailsWebsite.setOnClickListener(new View.OnClickListener() {
+    this.dataBinding.floatingActionButtonMovieDetailsFavorite.setOnClickListener(new View.OnClickListener() {
       @Override
-      public void onClick(View view) {
-        Helper.openUrlInBrowser(
-            movie.getHomepage(),
-            view.getContext()
-        );
+      public void onClick(View v) {
+        // ToDo: Change favorite state
       }
     });
+  
+    if (movie.getVideos().getResults().isEmpty() || (this.getVideoUrl(movie) == null)) {
+      this.dataBinding.imageButtonMovieDetailsVideos.setVisibility(View.GONE);
+    } else {
+      this.dataBinding.imageButtonMovieDetailsVideos.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Helper.openYouTubeVideo(MovieDetailsFragment.this.getVideoUrl(movie), MovieDetailsFragment.this.getContext());
+        }
+      });
+    }
+  
+    this.dataBinding.textViewMovieDetailsOverview.setText(movie.getOverview());
+    
+    this.dataBinding.linearLayoutMovieDetailsAdult.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
+  
+    this.dataBinding.textViewMovieDetailsRuntime.setText(String.valueOf(movie.getRuntime()));
+  
+    this.dataBinding.linearLayoutMovieDetailsReviews.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        MovieDetailsFragment.this.showReviews();
+      }
+    });
+  
+    if ((movie.getHomepage() == null) || movie.getHomepage().trim().isEmpty()) {
+      this.dataBinding.linearLayoutMovieDetailsWebsite.setVisibility(View.GONE);
+    } else {
+      this.dataBinding.linearLayoutMovieDetailsWebsite.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          Helper.openUrlInBrowser(
+              movie.getHomepage(),
+              view.getContext()
+          );
+        }
+      });
+    }
+  
+    if (movie.getVideos().getResults().isEmpty()) {
+      this.dataBinding.linearLayoutMovieDetailsVideos.setVisibility(View.GONE);
+    } else {
+      this.dataBinding.linearLayoutMovieDetailsVideos.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          // ToDo: Show list of trailers in a dialog box
+        }
+      });
+    }
     
     this.dataBinding.textViewMovieDetailsReleaseDate.setText(movie.getReleaseDate());
     
@@ -244,5 +288,35 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     // ToDo: Pass message to users on failure
     Toast.makeText(this.dataBinding.getRoot().getContext(), "Network failure", Toast.LENGTH_SHORT).show();
     this.dismissProgressDialog();
+  }
+  
+  private String getVideoUrl(MovieDetails movie) {
+    ArrayList<Video> videos = movie.getVideos().getResults();
+    String videoUrl = null;
+    
+    for (Video v : videos) {
+      if ((v != null) && (v.getVideoUrl() != null)) {
+        videoUrl = v.getVideoUrl();
+        break;
+      }
+    }
+    
+    return videoUrl;
+  }
+  
+  private void showReviews() {
+    ReviewAdapter reviewAdapter = new ReviewAdapter(this.getContext(), this.movieDetails.getReviews().getResults());
+    
+    MaterialDialog reviewDialog =
+        new MaterialDialog.Builder(this.getContext())
+            .title(R.string.label_reviews)
+            .iconRes(R.drawable.ic_account_circle)
+            .limitIconToDefaultSize()
+            .adapter(reviewAdapter, new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false))
+            .cancelable(true)
+            .neutralText(R.string.label_ok)
+            .build();
+    
+    reviewDialog.show();
   }
 }

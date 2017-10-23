@@ -29,44 +29,53 @@
                 android:layout_centerInParent="true"
                 android:background="?android:selectableItemBackground"
                 android:scaleType="fitCenter"
-                android:tint="@color/iconGrey"
+                android:tint="@color/colorIcon"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView_movieDetails_backdrop"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/imageView_movieDetails_backdrop"
                 app:srcCompat="@drawable/ic_play_circle_filled"/>
 
-            <android.support.v7.widget.LinearLayoutCompat
-                android:id="@+id/wrapper_title"
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/imageView_movieDetails_poster"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_movieDetails_backdrop"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_backdrop"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton_movieDetails_favorite"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:scaleType="center"
+                android:tint="@color/colorIcon"
+                app:backgroundTint="@color/colorPrimary"
+                app:borderWidth="0dp"
+                app:elevation="6dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView_movieDetails_backdrop"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_backdrop"
+                app:srcCompat="@drawable/ic_favorite_border"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/textView_movieDetails_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="16dp"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp"
-                android:paddingTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="2"
+                android:textSize="24sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_backdrop">
-
-                <android.support.v7.widget.AppCompatImageView
-                    android:id="@+id/imageView_movieDetails_poster"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="8dp"
-                    android:layout_height="match_parent"/>
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/textView_movieDetails_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:textSize="24sp"
-                    tools:text="Spider-Man: Homecoming"/>
-            </android.support.v7.widget.LinearLayoutCompat>
+                app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_poster"
+                tools:text="Spider-Man: Homecoming"/>
 
             <View
                 android:id="@+id/separator_title_icons"
@@ -76,10 +85,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:background="@color/separatorGrey"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/wrapper_title"/>
+                app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_title"/>
 
             <android.support.v4.widget.Space
                 android:id="@+id/space_icons_start"
@@ -93,7 +103,7 @@
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_adult"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:selectableItemBackground"
                 android:orientation="vertical"
@@ -102,28 +112,32 @@
                 app:layout_constraintLeft_toRightOf="@+id/space_icons_start"
                 app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_runtime"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime"
+                app:layout_constraintVertical_bias="0.0"
                 tools:visibility="visible">
 
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/imageView_movieDetails_adult_icon"
                     android:layout_width="match_parent"
-                    android:layout_height="75dp"
+                    android:layout_height="65dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     android:scaleType="fitCenter"
-                    android:tint="@color/separatorGrey"
+                    android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_report"/>
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_adult_icon"
                     android:layout_width="match_parent"
-                    android:layout_height="18sp"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/label_adult_only"/>
+                    android:text="@string/label_adult_only"
+                    android:textSize="12sp"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_runtime"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:selectableItemBackground"
                 android:orientation="vertical"
@@ -137,16 +151,16 @@
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_runtime"
-                    android:layout_width="75dp"
-                    android:layout_height="55dp"
+                    android:layout_width="60dp"
+                    android:layout_height="45dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="12dp"
                     android:layout_marginStart="12dp"
-                    android:background="@drawable/bg_rounded_grey"
+                    android:background="@drawable/bg_rounded_primary_color"
                     android:gravity="center"
                     android:maxWidth="75dp"
                     android:textColor="@android:color/white"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     tools:text="133"/>
 
                 <android.support.v4.widget.Space
@@ -155,15 +169,16 @@
 
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
-                    android:layout_height="18sp"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/label_runtime"/>
+                    android:text="@string/label_runtime"
+                    android:textSize="12sp"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_reviews"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:selectableItemBackground"
                 android:orientation="vertical"
@@ -174,42 +189,77 @@
 
                 <android.support.v7.widget.AppCompatImageView
                     android:layout_width="match_parent"
-                    android:layout_height="75dp"
+                    android:layout_height="65dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     android:scaleType="fitCenter"
-                    android:tint="@color/separatorGrey"
+                    android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_account_circle"/>
 
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
-                    android:layout_height="18sp"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/label_reviews"/>
+                    android:text="@string/label_reviews"
+                    android:textSize="12sp"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_website"
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?android:selectableItemBackground"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout_movieDetails_runtime"
                 app:layout_constraintLeft_toRightOf="@+id/linearLayout_movieDetails_reviews"
+                app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_videos"
+                app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:scaleType="fitCenter"
+                    android:tint="@color/colorPrimary"
+                    app:srcCompat="@drawable/ic_globe"/>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/label_visit_website"
+                    android:textSize="12sp"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <android.support.v7.widget.LinearLayoutCompat
+                android:id="@+id/linearLayout_movieDetails_videos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?android:selectableItemBackground"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout_movieDetails_runtime"
+                app:layout_constraintLeft_toRightOf="@+id/linearLayout_movieDetails_website"
                 app:layout_constraintRight_toLeftOf="@+id/space_icons_end"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime">
 
                 <android.support.v7.widget.AppCompatImageView
                     android:layout_width="match_parent"
-                    android:layout_height="75dp"
+                    android:layout_height="65dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     android:scaleType="fitCenter"
-                    android:tint="@color/separatorGrey"
-                    app:srcCompat="@drawable/ic_globe"/>
+                    android:tint="@color/colorPrimary"
+                    app:srcCompat="@drawable/ic_video_library"/>
 
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="match_parent"
-                    android:layout_height="18sp"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/label_visit_website"/>
+                    android:text="@string/label_view_videos"
+                    android:textSize="12sp"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v4.widget.Space
@@ -217,7 +267,7 @@
                 android:layout_width="16dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout_movieDetails_runtime"
-                app:layout_constraintLeft_toRightOf="@+id/linearLayout_movieDetails_website"
+                app:layout_constraintLeft_toRightOf="@+id/linearLayout_movieDetails_videos"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime"/>
 
@@ -229,7 +279,8 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:background="@color/separatorGrey"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout_movieDetails_runtime"/>
@@ -269,7 +320,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/separatorGrey"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_overview"/>
@@ -283,6 +334,8 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:text="@string/label_releases_on"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/separator_overview_ratings"/>
 
@@ -292,8 +345,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView_movieDetails_releaseDate_label"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView_movieDetails_releaseDate_label"
                 tools:text="16-12-2016"/>
 
             <me.zhanghai.android.materialratingbar.MaterialRatingBar
@@ -329,7 +382,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/separatorGrey"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_rating"/>
@@ -356,7 +409,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/separatorGrey"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_movieDetails_genres"/>
@@ -424,7 +477,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/separatorGrey"
+                android:background="@color/colorDivider"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_movieDetails_similarMovies"/>

@@ -100,4 +100,12 @@ public final class Video {
   public String toString() {
     return (new Gson()).toJson(this);
   }
+  
+  public String getVideoUrl() {
+    if ("youtube".equals(this.getSite().toLowerCase())) {
+      return "https://www.youtube.com/watch?v=" + this.getKey();
+    } else {
+      return null;
+    }
+  }
 }

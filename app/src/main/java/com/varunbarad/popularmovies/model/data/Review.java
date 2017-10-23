@@ -10,7 +10,10 @@ import com.google.gson.annotations.SerializedName;
  * Project: PopularMovies
  */
 
-public final class ReviewStub {
+public final class Review {
+  private static final int SHORTENED_LENGTH = 200;
+  private static final String ellipsis = "...";
+  
   @Expose
   @SerializedName("id")
   private String id;
@@ -27,7 +30,7 @@ public final class ReviewStub {
   /**
    * Public no-args constructor for serialization
    */
-  public ReviewStub() {
+  public Review() {
 
   }
 
@@ -37,7 +40,7 @@ public final class ReviewStub {
    * @param content
    * @param url
    */
-  public ReviewStub(final String id, final String author, final String content, final String url) {
+  public Review(final String id, final String author, final String content, final String url) {
     this.id = id;
     this.author = author;
     this.content = content;
@@ -63,5 +66,14 @@ public final class ReviewStub {
   @Override
   public String toString() {
     return (new Gson()).toJson(this);
+  }
+  
+  public final String getShortenedContent() {
+    String content = this.getContent();
+    if (content.length() > Review.SHORTENED_LENGTH) {
+      return content.substring(0, Review.SHORTENED_LENGTH - Review.ellipsis.length()) + Review.ellipsis;
+    } else {
+      return content;
+    }
   }
 }

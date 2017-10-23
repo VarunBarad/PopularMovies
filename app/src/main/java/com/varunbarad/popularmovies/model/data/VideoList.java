@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public final class VideoList {
   @Expose
-  @SerializedName("videos")
-  private ArrayList<Video> videos;
+  @SerializedName("results")
+  private ArrayList<Video> results;
 
   /**
    * Public no-args constructor for serialization
@@ -25,14 +25,14 @@ public final class VideoList {
   }
 
   /**
-   * @param videos
+   * @param results
    */
-  public VideoList(final ArrayList<Video> videos) {
-    this.videos = videos;
+  public VideoList(final ArrayList<Video> results) {
+    this.results = results;
   }
-
-  public ArrayList<Video> getVideos() {
-    return videos;
+  
+  public ArrayList<Video> getResults() {
+    return results;
   }
 
   @Override

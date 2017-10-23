@@ -18,7 +18,7 @@ public final class ReviewList {
   private long page;
   @Expose
   @SerializedName("results")
-  private ArrayList<ReviewStub> reviews;
+  private ArrayList<Review> results;
   @Expose
   @SerializedName("total_pages")
   private long totalPages;
@@ -35,13 +35,13 @@ public final class ReviewList {
 
   /**
    * @param page
-   * @param reviews
+   * @param results
    * @param totalPages
    * @param totalResults
    */
-  public ReviewList(final long page, final ArrayList<ReviewStub> reviews, final long totalPages, final long totalResults) {
+  public ReviewList(final long page, final ArrayList<Review> results, final long totalPages, final long totalResults) {
     this.page = page;
-    this.reviews = reviews;
+    this.results = results;
     this.totalPages = totalPages;
     this.totalResults = totalResults;
   }
@@ -49,13 +49,13 @@ public final class ReviewList {
   public long getPage() {
     return page;
   }
-
-  public ArrayList<ReviewStub> getReviews() {
-    return reviews;
+  
+  public ArrayList<Review> getResults() {
+    return results;
   }
-
-  public void setReviews(ArrayList<ReviewStub> reviews) {
-    this.reviews = reviews;
+  
+  public void setResults(ArrayList<Review> results) {
+    this.results = results;
   }
 
   public long getTotalPages() {
