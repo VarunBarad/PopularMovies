@@ -188,12 +188,16 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   
     this.dataBinding.textViewMovieDetailsRuntime.setText(String.valueOf(movie.getRuntime()));
   
-    this.dataBinding.linearLayoutMovieDetailsReviews.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        MovieDetailsFragment.this.showReviews();
-      }
-    });
+    if (movie.getReviews().getResults().isEmpty()) {
+      this.dataBinding.linearLayoutMovieDetailsReviews.setVisibility(View.GONE);
+    } else {
+      this.dataBinding.linearLayoutMovieDetailsReviews.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+          MovieDetailsFragment.this.showReviews();
+        }
+      });
+    }
   
     if ((movie.getHomepage() == null) || movie.getHomepage().trim().isEmpty()) {
       this.dataBinding.linearLayoutMovieDetailsWebsite.setVisibility(View.GONE);
