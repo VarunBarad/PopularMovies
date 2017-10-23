@@ -21,6 +21,9 @@ public interface MovieDbApiRetroFitHelper {
   @GET("/3/discover/movie?api_key=" + BuildConfig.TMDBApiKey + "&sort_by=popularity.desc&vote_count.gte=50")
   Call<MovieList> getPopularMovies(@Query("page") long page);
   
+  @GET("/3/discover/movie?api_key=" + BuildConfig.TMDBApiKey + "&sort_by=vote_average.desc&vote_count.gte=50")
+  Call<MovieList> getHighestRatedMovies(@Query("page") long page);
+  
   @GET("/3/movie/{movieId}?api_key=" + BuildConfig.TMDBApiKey + "&append_to_response=videos,images,reviews,recommendations,similar_movies")
   Call<MovieDetails> getMovieDetails(@Path("movieId") long movieId);
 }

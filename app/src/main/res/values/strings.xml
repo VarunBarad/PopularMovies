@@ -12,4 +12,10 @@
     <string name="label_releases_on">Releases on</string>
     <string name="label_more">More</string>
     <string name="label_ok">OK</string>
+
+    <string-array name="entries_sortCriteria">
+        <item>Most popular</item>
+        <item>Highest rated</item>
+        <item>My favorites</item>
+    </string-array>
 </resources>
