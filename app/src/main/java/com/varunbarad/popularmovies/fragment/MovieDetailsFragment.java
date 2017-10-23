@@ -20,6 +20,7 @@ import com.varunbarad.popularmovies.activity.MovieDetailsActivity;
 import com.varunbarad.popularmovies.adapter.GenreAdapter;
 import com.varunbarad.popularmovies.adapter.ReviewAdapter;
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
+import com.varunbarad.popularmovies.adapter.TrailerVideoAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
@@ -214,7 +215,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       this.dataBinding.linearLayoutMovieDetailsVideos.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          // ToDo: Show list of trailers in a dialog box
+          MovieDetailsFragment.this.showVideos();
         }
       });
     }
@@ -306,13 +307,29 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   
   private void showReviews() {
     ReviewAdapter reviewAdapter = new ReviewAdapter(this.getContext(), this.movieDetails.getReviews().getResults());
-    
+  
     MaterialDialog reviewDialog =
         new MaterialDialog.Builder(this.getContext())
             .title(R.string.label_reviews)
             .iconRes(R.drawable.ic_account_circle)
             .limitIconToDefaultSize()
             .adapter(reviewAdapter, new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false))
+            .cancelable(true)
+            .neutralText(R.string.label_ok)
+            .build();
+  
+    reviewDialog.show();
+  }
+  
+  private void showVideos() {
+    TrailerVideoAdapter trailerVideoAdapter = new TrailerVideoAdapter(this.getContext(), this.movieDetails.getVideos().getResults());
+    
+    MaterialDialog reviewDialog =
+        new MaterialDialog.Builder(this.getContext())
+            .title(R.string.label_view_videos)
+            .iconRes(R.drawable.ic_video_library)
+            .limitIconToDefaultSize()
+            .adapter(trailerVideoAdapter, new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false))
             .cancelable(true)
             .neutralText(R.string.label_ok)
             .build();
