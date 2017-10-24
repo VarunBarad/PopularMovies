@@ -25,7 +25,7 @@ public final class Image {
   private int height;
   @Expose
   @SerializedName("iso_639_1")
-  private String isoCountryCode;
+  private String isoLanguageCode;
   @Expose
   @SerializedName("vote_average")
   private double averageVotes;
@@ -45,16 +45,16 @@ public final class Image {
    * @param imagePath
    * @param width
    * @param height
-   * @param isoCountryCode
+   * @param isoLanguageCode
    * @param averageVotes
    * @param numberOfVotes
    */
-  public Image(final double aspectRatio, final String imagePath, final int width, final int height, final String isoCountryCode, final double averageVotes, final long numberOfVotes) {
+  public Image(final double aspectRatio, final String imagePath, final int width, final int height, final String isoLanguageCode, final double averageVotes, final long numberOfVotes) {
     this.aspectRatio = aspectRatio;
     this.imagePath = imagePath;
     this.width = width;
     this.height = height;
-    this.isoCountryCode = isoCountryCode;
+    this.isoLanguageCode = isoLanguageCode;
     this.averageVotes = averageVotes;
     this.numberOfVotes = numberOfVotes;
   }
@@ -74,9 +74,9 @@ public final class Image {
   public int getHeight() {
     return height;
   }
-
-  public String getIsoCountryCode() {
-    return isoCountryCode;
+  
+  public String getIsoLanguageCode() {
+    return isoLanguageCode;
   }
 
   public double getAverageVotes() {
