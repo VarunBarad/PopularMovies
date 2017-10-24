@@ -16,10 +16,10 @@ public final class Video {
   private String id;
   @Expose
   @SerializedName("iso_639_1")
-  private String isoCode;
+  private String isoLanguageCode;
   @Expose
   @SerializedName("iso_3166_1")
-  private String isoName;
+  private String isoCountryCode;
   @Expose
   @SerializedName("key")
   private String key;
@@ -45,18 +45,18 @@ public final class Video {
 
   /**
    * @param id
-   * @param isoCode
-   * @param isoName
+   * @param isoLanguageCode
+   * @param isoCountryCode
    * @param key
    * @param name
    * @param site
    * @param size
    * @param type
    */
-  public Video(String id, String isoCode, String isoName, String key, String name, String site, int size, String type) {
+  public Video(String id, String isoLanguageCode, String isoCountryCode, String key, String name, String site, int size, String type) {
     this.id = id;
-    this.isoCode = isoCode;
-    this.isoName = isoName;
+    this.isoLanguageCode = isoLanguageCode;
+    this.isoCountryCode = isoCountryCode;
     this.key = key;
     this.name = name;
     this.site = site;
@@ -67,13 +67,13 @@ public final class Video {
   public String getId() {
     return id;
   }
-
-  public String getIsoCode() {
-    return isoCode;
+  
+  public String getIsoLanguageCode() {
+    return isoLanguageCode;
   }
-
-  public String getIsoName() {
-    return isoName;
+  
+  public String getIsoCountryCode() {
+    return isoCountryCode;
   }
 
   public String getKey() {
