@@ -437,22 +437,6 @@
                     android:text="@string/label_similar"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/button_movieDetails_similarMovies"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:minHeight="10dp"
-                    android:text="More"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v7.widget.RecyclerView
@@ -505,22 +489,6 @@
                     android:text="@string/label_you_may_also_like"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
-
-                <android.support.v4.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/button_movieDetails_recommendedMovies"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:minHeight="10dp"
-                    android:text="More"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"/>
             </android.support.v7.widget.LinearLayoutCompat>
 
             <android.support.v7.widget.RecyclerView
