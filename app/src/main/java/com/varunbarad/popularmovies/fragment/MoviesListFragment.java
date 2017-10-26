@@ -144,28 +144,28 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   
     this.sortOrder = this.sortCriteriaEntries[this.dataBinding.spinnerSortCriteria.getSelectedItemPosition()];
   
-    if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("most popular")) {
-      if (MoviesListFragment.this.isPopularRefreshNeeded()) {
-        if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
-          MoviesListFragment.this.fetchPopularMovies();
+    if (this.sortOrder.equalsIgnoreCase("most popular")) {
+      if (this.isPopularRefreshNeeded()) {
+        if (Helper.isConnectedToInternet(this.getContext())) {
+          this.fetchPopularMovies();
         } else {
-          MoviesListFragment.this.showNetworkError();
+          this.showNetworkError();
         }
       } else {
-        MoviesListFragment.this.showMovies(MoviesListFragment.this.retreivePopularMovies());
+        this.showMovies(this.retreivePopularMovies());
       }
-    } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("highest rated")) {
-      if (MoviesListFragment.this.isHighestRatedRefreshNeeded()) {
-        if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
-          MoviesListFragment.this.fetchHighestRatedMovies();
+    } else if (this.sortOrder.equalsIgnoreCase("highest rated")) {
+      if (this.isHighestRatedRefreshNeeded()) {
+        if (Helper.isConnectedToInternet(this.getContext())) {
+          this.fetchHighestRatedMovies();
         } else {
-          MoviesListFragment.this.showNetworkError();
+          this.showNetworkError();
         }
       } else {
-        MoviesListFragment.this.showMovies(MoviesListFragment.this.retreiveHighestRatedMovies());
+        this.showMovies(this.retreiveHighestRatedMovies());
       }
-    } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("my favorites")) {
-      MoviesListFragment.this.fetchFavoriteMovies();
+    } else if (this.sortOrder.equalsIgnoreCase("my favorites")) {
+      this.fetchFavoriteMovies();
     }
     
     return this.dataBinding.getRoot();
