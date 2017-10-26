@@ -1,10 +1,14 @@
 package com.varunbarad.popularmovies.model.data;
 
+import android.content.ContentValues;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.varunbarad.popularmovies.util.data.MovieContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Creator: vbarad
@@ -103,14 +107,14 @@ public final class MovieDetails {
   @Expose
   @SerializedName("similar_movies")
   private MovieList similarMovies;
-
+  
   /**
    * Public no-args constructor for serialization
    */
   public MovieDetails() {
-
+  
   }
-
+  
   /**
    * @param adult
    * @param backdropPath
@@ -175,11 +179,79 @@ public final class MovieDetails {
     this.recommendations = recommendations;
     this.similarMovies = similarMovies;
   }
-
+  
+  public static MovieDetails initFromContentValues(ContentValues values) {
+    Gson gson = new Gson();
+    
+    long movieId = values.getAsLong(MovieContract.Movie.COLUMN_MOVIE_ID);
+    boolean isAdult = (values.getAsInteger(MovieContract.Movie.COLUMN_ADULT) == 1);
+    String backdropPath = values.getAsString(MovieContract.Movie.COLUMN_BACKDROP_PATH);
+    CollectionStub collection = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_COLLECTION), CollectionStub.class);
+    long budget = values.getAsLong(MovieContract.Movie.COLUMN_BUDGET);
+    ArrayList<Genre> genres = new ArrayList<>(Arrays.asList(gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_GENRES), Genre[].class)));
+    String homepage = values.getAsString(MovieContract.Movie.COLUMN_HOMEPAGE);
+    String imdbId = values.getAsString(MovieContract.Movie.COLUMN_IMDB_ID);
+    String originalLanguage = values.getAsString(MovieContract.Movie.COLUMN_ORIGINAL_LANGUAGE);
+    String originalTitle = values.getAsString(MovieContract.Movie.COLUMN_ORIGINAL_TITLE);
+    String overview = values.getAsString(MovieContract.Movie.COLUMN_OVERVIEW);
+    double popularity = values.getAsDouble(MovieContract.Movie.COLUMN_POPULARITY);
+    String posterPath = values.getAsString(MovieContract.Movie.COLUMN_POSTER_PATH);
+    ArrayList<CompanyStub> productionCompanies = new ArrayList<>(Arrays.asList(gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_PRODUCTION_COMPANIES), CompanyStub[].class)));
+    ArrayList<Country> productionCountries = new ArrayList<>(Arrays.asList(gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_PRODUCTION_COUNTRIES), Country[].class)));
+    String releaseDate = values.getAsString(MovieContract.Movie.COLUMN_RELEASE_DATE);
+    long revenue = values.getAsLong(MovieContract.Movie.COLUMN_REVENUE);
+    int runtime = values.getAsInteger(MovieContract.Movie.COLUMN_RUNTIME);
+    ArrayList<Language> spokenLanguages = new ArrayList<>(Arrays.asList(gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_SPOKEN_LANGUAGES), Language[].class)));
+    String status = values.getAsString(MovieContract.Movie.COLUMN_STATUS);
+    String tagline = values.getAsString(MovieContract.Movie.COLUMN_TAGLINE);
+    String title = values.getAsString(MovieContract.Movie.COLUMN_TITLE);
+    boolean isVideo = (values.getAsInteger(MovieContract.Movie.COLUMN_IS_VIDEO) == 1);
+    double voteAverage = values.getAsDouble(MovieContract.Movie.COLUMN_VOTE_AVERAGE);
+    long numberOfVotes = values.getAsLong(MovieContract.Movie.COLUMN_VOTE_COUNT);
+    VideoList videos = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_VIDEOS), VideoList.class);
+    ImageList images = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_IMAGES), ImageList.class);
+    ReviewList reviews = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_REVIEWS), ReviewList.class);
+    MovieList recommendations = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_RECOMMENDED_MOVIES), MovieList.class);
+    MovieList similarMovies = gson.fromJson(values.getAsString(MovieContract.Movie.COLUMN_SIMILAR_MOVIES), MovieList.class);
+    
+    return new MovieDetails(
+        isAdult,
+        backdropPath,
+        collection,
+        budget,
+        genres,
+        homepage,
+        movieId,
+        imdbId,
+        originalLanguage,
+        originalTitle,
+        overview,
+        popularity,
+        posterPath,
+        productionCompanies,
+        productionCountries,
+        releaseDate,
+        revenue,
+        runtime,
+        spokenLanguages,
+        status,
+        tagline,
+        title,
+        isVideo,
+        voteAverage,
+        numberOfVotes,
+        videos,
+        images,
+        reviews,
+        recommendations,
+        similarMovies
+    );
+  }
+  
   public boolean isAdult() {
     return adult;
   }
-
+  
   public String getBackdropPath() {
     return backdropPath;
   }
@@ -187,117 +259,157 @@ public final class MovieDetails {
   public CollectionStub getCollection() {
     return collection;
   }
-
+  
   public long getBudget() {
     return budget;
   }
-
+  
   public ArrayList<Genre> getGenres() {
     return genres;
   }
-
+  
   public String getHomepage() {
     return homepage;
   }
-
+  
   public long getId() {
     return id;
   }
-
+  
   public String getIdIMDB() {
     return idIMDB;
   }
-
+  
   public String getOriginalLanguage() {
     return originalLanguage;
   }
-
+  
   public String getOriginalTitle() {
     return originalTitle;
   }
-
+  
   public String getOverview() {
     return overview;
   }
-
+  
   public double getPopularity() {
     return popularity;
   }
-
+  
   public String getPosterPath() {
     return posterPath;
   }
-
+  
   public ArrayList<CompanyStub> getProductionCompanies() {
     return productionCompanies;
   }
-
+  
   public ArrayList<Country> getProductionCountries() {
     return productionCountries;
   }
-
+  
   public String getReleaseDate() {
     return releaseDate;
   }
-
+  
   public long getRevenue() {
     return revenue;
   }
-
+  
   public int getRuntime() {
     return runtime;
   }
-
+  
   public ArrayList<Language> getSpokenLanguages() {
     return spokenLanguages;
   }
-
+  
   public String getStatus() {
     return status;
   }
-
+  
   public String getTagLine() {
     return tagLine;
   }
-
+  
   public String getTitle() {
     return title;
   }
-
+  
   public boolean isVideo() {
     return video;
   }
-
+  
   public double getAverageVote() {
     return averageVote;
   }
-
+  
   public long getNumberOfVotes() {
     return numberOfVotes;
   }
-
+  
   public VideoList getVideos() {
     return videos;
   }
-
+  
   public ImageList getImages() {
     return images;
   }
-
+  
   public ReviewList getReviews() {
     return reviews;
   }
-
+  
   public MovieList getRecommendations() {
     return recommendations;
   }
-
+  
   public MovieList getSimilarMovies() {
     return similarMovies;
   }
-
+  
   @Override
   public String toString() {
     return (new Gson()).toJson(this);
+  }
+  
+  public ContentValues toContentValues(boolean isFavorite) {
+    ContentValues movieValues = new ContentValues();
+    
+    Gson gson = new Gson();
+    
+    movieValues.put(MovieContract.Movie.COLUMN_MOVIE_ID, this.getId());
+    movieValues.put(MovieContract.Movie.COLUMN_ADULT, (this.isAdult() ? 1 : 0));
+    movieValues.put(MovieContract.Movie.COLUMN_BACKDROP_PATH, this.getBackdropPath());
+    movieValues.put(MovieContract.Movie.COLUMN_COLLECTION, gson.toJson(this.getCollection()));
+    movieValues.put(MovieContract.Movie.COLUMN_BUDGET, this.getBudget());
+    movieValues.put(MovieContract.Movie.COLUMN_GENRES, gson.toJson(this.getGenres()));
+    movieValues.put(MovieContract.Movie.COLUMN_HOMEPAGE, this.getHomepage());
+    movieValues.put(MovieContract.Movie.COLUMN_IMDB_ID, this.getIdIMDB());
+    movieValues.put(MovieContract.Movie.COLUMN_ORIGINAL_LANGUAGE, this.getOriginalLanguage());
+    movieValues.put(MovieContract.Movie.COLUMN_ORIGINAL_TITLE, this.getOriginalTitle());
+    movieValues.put(MovieContract.Movie.COLUMN_OVERVIEW, this.getOverview());
+    movieValues.put(MovieContract.Movie.COLUMN_POPULARITY, this.getPopularity());
+    movieValues.put(MovieContract.Movie.COLUMN_POSTER_PATH, this.getPosterPath());
+    movieValues.put(MovieContract.Movie.COLUMN_PRODUCTION_COMPANIES, gson.toJson(this.getProductionCompanies()));
+    movieValues.put(MovieContract.Movie.COLUMN_PRODUCTION_COUNTRIES, gson.toJson(this.getProductionCountries()));
+    movieValues.put(MovieContract.Movie.COLUMN_RELEASE_DATE, this.getReleaseDate());
+    movieValues.put(MovieContract.Movie.COLUMN_REVENUE, this.getRevenue());
+    movieValues.put(MovieContract.Movie.COLUMN_RUNTIME, this.getRuntime());
+    movieValues.put(MovieContract.Movie.COLUMN_SPOKEN_LANGUAGES, gson.toJson(this.getSpokenLanguages()));
+    movieValues.put(MovieContract.Movie.COLUMN_STATUS, this.getStatus());
+    movieValues.put(MovieContract.Movie.COLUMN_TAGLINE, this.getTagLine());
+    movieValues.put(MovieContract.Movie.COLUMN_TITLE, this.getTitle());
+    movieValues.put(MovieContract.Movie.COLUMN_IS_VIDEO, (this.isVideo() ? 1 : 0));
+    movieValues.put(MovieContract.Movie.COLUMN_VOTE_AVERAGE, this.getAverageVote());
+    movieValues.put(MovieContract.Movie.COLUMN_VOTE_COUNT, this.getNumberOfVotes());
+    movieValues.put(MovieContract.Movie.COLUMN_VIDEOS, gson.toJson(this.getVideos()));
+    movieValues.put(MovieContract.Movie.COLUMN_IMAGES, gson.toJson(this.getImages()));
+    movieValues.put(MovieContract.Movie.COLUMN_REVIEWS, gson.toJson(this.getReviews()));
+    movieValues.put(MovieContract.Movie.COLUMN_RECOMMENDED_MOVIES, gson.toJson(this.getRecommendations()));
+    movieValues.put(MovieContract.Movie.COLUMN_SIMILAR_MOVIES, gson.toJson(this.getSimilarMovies()));
+    movieValues.put(MovieContract.Movie.COLUMN_IS_FAVORITE, (isFavorite ? 1 : 0));
+    
+    return movieValues;
   }
 }

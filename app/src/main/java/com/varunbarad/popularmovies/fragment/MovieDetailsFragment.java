@@ -2,7 +2,9 @@ package com.varunbarad.popularmovies.fragment;
 
 import android.accounts.NetworkErrorException;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,6 +32,7 @@ import com.varunbarad.popularmovies.model.data.Video;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
+import com.varunbarad.popularmovies.util.data.MovieContract;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -54,6 +57,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   
   private MovieStub movieStub;
   private MovieDetails movieDetails;
+  private boolean isMovieFavorite = false;
   
   private FragmentMovieDetailsBinding dataBinding;
   
@@ -102,7 +106,29 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     
     this.fetchMovieDetails();
     this.fillPartialDetails(this.movieStub);
-    this.showProgressDialog();
+  
+    Cursor cursor = this.getContext().getContentResolver().query(
+        MovieContract.Movie.buildUriWithMovieId(this.movieStub.getId()),
+        null,
+        null,
+        null,
+        null
+    );
+  
+    if (cursor != null) {
+      if (cursor.getCount() > 0) {
+        cursor.moveToFirst();
+        this.movieDetails = Helper.readOneMovie(cursor);
+        this.isMovieFavorite = (cursor.getInt(cursor.getColumnIndex(MovieContract.Movie.COLUMN_IS_FAVORITE)) == 1);
+        cursor.moveToNext();
+        this.fillDetails(this.movieDetails);
+      } else {
+        this.showProgressDialog();
+      }
+      cursor.close();
+    } else {
+      this.showProgressDialog();
+    }
     
     return this.dataBinding.getRoot();
   }
@@ -164,10 +190,15 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   }
   
   private void fillDetails(final MovieDetails movie) {
+    if (this.isMovieFavorite) {
+      this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite);
+    } else {
+      this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite_border);
+    }
     this.dataBinding.floatingActionButtonMovieDetailsFavorite.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        // ToDo: Change favorite state
+        MovieDetailsFragment.this.toggleFavorite();
       }
     });
   
@@ -285,6 +316,12 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       this.movieDetails = response.body();
       this.dismissProgressDialog();
       this.fillDetails(this.movieDetails);
+  
+      // Save the movie-details to database
+      this.getContext().getContentResolver().insert(
+          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
+          this.movieDetails.toContentValues(isMovieFavorite)
+      );
     }
   }
   
@@ -339,5 +376,33 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
             .build();
     
     reviewDialog.show();
+  }
+  
+  private void toggleFavorite() {
+    if (this.isMovieFavorite) {
+      this.isMovieFavorite = false;
+      this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite_border);
+      
+      ContentValues updateValues = new ContentValues();
+      updateValues.put(MovieContract.Movie.COLUMN_IS_FAVORITE, 0);
+      this.getContext().getContentResolver().update(
+          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
+          updateValues,
+          null,
+          null
+      );
+    } else {
+      this.isMovieFavorite = true;
+      this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite);
+      
+      ContentValues updateValues = new ContentValues();
+      updateValues.put(MovieContract.Movie.COLUMN_IS_FAVORITE, 1);
+      this.getContext().getContentResolver().update(
+          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
+          updateValues,
+          null,
+          null
+      );
+    }
   }
 }
