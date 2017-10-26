@@ -1,5 +1,7 @@
 package com.varunbarad.popularmovies.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -22,6 +24,11 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
   private ActivityMainBinding dataBinding;
   
   private boolean isDualPane;
+  
+  public static void startActivity(Context context) {
+    Intent mainActivityIntent = new Intent(context, MainActivity.class);
+    context.startActivity(mainActivityIntent);
+  }
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
