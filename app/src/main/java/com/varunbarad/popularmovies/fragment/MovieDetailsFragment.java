@@ -310,18 +310,20 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   
   @Override
   public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
-    if (response == null || response.body() == null) {
-      this.onFailure(call, new NetworkErrorException("Null response from server"));
-    } else {
-      this.movieDetails = response.body();
-      this.dismissProgressDialog();
-      this.fillDetails(this.movieDetails);
-  
-      // Save the movie-details to database
-      this.getContext().getContentResolver().insert(
-          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
-          this.movieDetails.toContentValues(isMovieFavorite)
-      );
+    if (this.isVisible()) {
+      if (response == null || response.body() == null) {
+        this.onFailure(call, new NetworkErrorException("Null response from server"));
+      } else {
+        this.movieDetails = response.body();
+        this.dismissProgressDialog();
+        this.fillDetails(this.movieDetails);
+      
+        // Save the movie-details to database
+        this.getContext().getContentResolver().insert(
+            MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
+            this.movieDetails.toContentValues(isMovieFavorite)
+        );
+      }
     }
   }
   

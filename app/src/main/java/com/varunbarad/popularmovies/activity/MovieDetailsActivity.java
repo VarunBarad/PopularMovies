@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.databinding.ActivityMovieDetailsBinding;
@@ -65,6 +66,16 @@ public class MovieDetailsActivity extends AppCompatActivity implements OnFragmen
   private void setActivityTitle(String title) {
     if (title != null && !title.isEmpty()) {
       this.dataBinding.toolbar.setTitle(title);
+    }
+  }
+  
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      this.onBackPressed();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
     }
   }
 }
