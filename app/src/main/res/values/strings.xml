@@ -13,15 +13,17 @@
     <string name="label_more">More</string>
     <string name="label_ok">OK</string>
 
+    <string name="message_no_favorites">Looks like you haven\'t selected any favorite movies.</string>
+
     <string-array name="entries_sortCriteria">
         <item>Most popular</item>
         <item>Highest rated</item>
         <item>My favorites</item>
     </string-array>
 
-    <string name="PREFS_NAME">com.varunbarad.popularmovies</string>
-    <string name="PREFS_KEY_POPULAR">popular_movies</string>
-    <string name="PREFS_KEY_POPULAR_TIMESTAMP">popular_movies_timestamp</string>
-    <string name="PREFS_KEY_HIGHEST_RATED">highest_rated_movies</string>
-    <string name="PREFS_KEY_HIGHEST_RATED_TIMESTAMP">highest_rated_movies_timestamp</string>
+    <string name="PREFS_NAME" translatable="false">com.varunbarad.popularmovies</string>
+    <string name="PREFS_KEY_POPULAR" translatable="false">popular_movies</string>
+    <string name="PREFS_KEY_POPULAR_TIMESTAMP" translatable="false">popular_movies_timestamp</string>
+    <string name="PREFS_KEY_HIGHEST_RATED" translatable="false">highest_rated_movies</string>
+    <string name="PREFS_KEY_HIGHEST_RATED_TIMESTAMP" translatable="false">highest_rated_movies_timestamp</string>
 </resources>

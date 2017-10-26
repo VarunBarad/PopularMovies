@@ -170,6 +170,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   }
   
   private void fetchPopularMovies() {
+    this.showProgress();
+    
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
@@ -195,6 +197,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   }
   
   private void fetchHighestRatedMovies() {
+    this.showProgress();
+  
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
@@ -237,12 +241,12 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         this.dataBinding.placeHolderError.setVisibility(View.GONE);
         this.dataBinding.recyclerViewMovies.setVisibility(View.VISIBLE);
       } else {
-        //ToDo: Show no favorite movies
+        this.showNoFavorites();
       }
       
       cursor.close();
     } else {
-      //ToDo: Show no favorite movies
+      this.showNoFavorites();
     }
   }
   
@@ -253,6 +257,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         .setVisibility(View.GONE);
     this.dataBinding.placeHolderError
         .setVisibility(View.VISIBLE);
+    this.dataBinding.placeHolderNoFavorites
+        .setVisibility(View.GONE);
   }
   
   private void showProgress() {
@@ -262,6 +268,19 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         .setVisibility(View.GONE);
     this.dataBinding.placeHolderError
         .setVisibility(View.GONE);
+    this.dataBinding.placeHolderNoFavorites
+        .setVisibility(View.GONE);
+  }
+  
+  private void showNoFavorites() {
+    this.dataBinding.placeholderProgress
+        .setVisibility(View.GONE);
+    this.dataBinding.recyclerViewMovies
+        .setVisibility(View.GONE);
+    this.dataBinding.placeHolderError
+        .setVisibility(View.GONE);
+    this.dataBinding.placeHolderNoFavorites
+        .setVisibility(View.VISIBLE);
   }
   
   private void showMovies(ArrayList<MovieStub> movies) {
@@ -273,6 +292,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.dataBinding.recyclerViewMovies
         .setVisibility(View.VISIBLE);
     this.dataBinding.placeHolderError
+        .setVisibility(View.GONE);
+    this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.GONE);
   }
   
