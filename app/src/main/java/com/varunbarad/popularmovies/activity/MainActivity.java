@@ -151,16 +151,19 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
       this.onBackPressed();
-      
-      if (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MoviesListFragment) {
-        if (this.getSupportActionBar() != null) {
-          this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
-      }
-      
       return true;
     } else {
       return super.onOptionsItemSelected(item);
+    }
+  }
+  
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    if (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MoviesListFragment) {
+      if (this.getSupportActionBar() != null) {
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+      }
     }
   }
 }
