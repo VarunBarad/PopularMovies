@@ -33,6 +33,27 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
   public ArrayList<MovieStub> getMovies() {
     return this.movies;
   }
+  
+  public void addMovie(MovieStub movieStub) {
+    this.movies.add(movieStub);
+    this.notifyItemInserted(this.getItemCount() - 1);
+  }
+  
+  public void removeMovie(long movieId) {
+    int position = -1;
+    int totalItems = this.getItemCount();
+    for (int i = 0; i < totalItems; i++) {
+      if (this.movies.get(i).getId() == movieId) {
+        position = i;
+        break;
+      }
+    }
+    
+    if (position != -1) {
+      this.movies.remove(position);
+      this.notifyItemRemoved(position);
+    }
+  }
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

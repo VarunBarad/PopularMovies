@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
-import com.varunbarad.popularmovies.activity.MovieDetailsActivity;
 import com.varunbarad.popularmovies.adapter.GenreAdapter;
 import com.varunbarad.popularmovies.adapter.ReviewAdapter;
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
@@ -164,6 +163,14 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         .enqueue(this);
   }
   
+  public long getMovieId() {
+    if (this.movieDetails != null) {
+      return this.movieDetails.getId();
+    } else {
+      return this.movieStub.getId();
+    }
+  }
+  
   private void fillPartialDetails(MovieStub movieStub) {
     this.dataBinding.textViewMovieDetailsTitle.setText(movieStub.getTitle());
     
@@ -285,7 +292,10 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         new ListItemClickListener() {
           @Override
           public void onItemClick(int position) {
-            MovieDetailsActivity.startActivity(getActivity(), movie.getSimilarMovies().getResults().get(position));
+            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(Helper.generateMessage(
+                OnFragmentInteractionListener.TAG_MOVIE,
+                movie.getSimilarMovies().getResults().get(position).toString()
+            ));
           }
         }
     ));
@@ -302,7 +312,10 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         new ListItemClickListener() {
           @Override
           public void onItemClick(int position) {
-            MovieDetailsActivity.startActivity(getActivity(), movie.getRecommendations().getResults().get(position));
+            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(Helper.generateMessage(
+                OnFragmentInteractionListener.TAG_MOVIE,
+                movie.getRecommendations().getResults().get(position).toString()
+            ));
           }
         }
     ));
@@ -317,7 +330,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         this.movieDetails = response.body();
         this.dismissProgressDialog();
         this.fillDetails(this.movieDetails);
-      
+  
         // Save the movie-details to database
         this.getContext().getContentResolver().insert(
             MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
@@ -392,6 +405,14 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
           null,
           null
       );
+  
+      this.fragmentInteractionListener.onFragmentInteraction(
+          Helper.generateMessage(
+              OnFragmentInteractionListener.TAG_UNFAVORITE,
+              String.valueOf(this.movieDetails.getId())
+          )
+  
+      );
     } else {
       this.isMovieFavorite = true;
       this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite);
@@ -403,6 +424,13 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
           updateValues,
           null,
           null
+      );
+  
+      this.fragmentInteractionListener.onFragmentInteraction(
+          Helper.generateMessage(
+              OnFragmentInteractionListener.TAG_FAVORITE,
+              this.movieDetails.toString()
+          )
       );
     }
   }

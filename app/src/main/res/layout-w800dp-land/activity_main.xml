@@ -28,9 +28,8 @@
             android:orientation="horizontal"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <fragment
-                android:id="@+id/fragment_list"
-                android:name="com.varunbarad.popularmovies.fragment.MoviesListFragment"
+            <FrameLayout
+                android:id="@+id/fragment_main_container"
                 android:layout_width="400dp"
                 android:layout_height="match_parent"
                 tools:layout="@layout/fragment_movies_list"/>

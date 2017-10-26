@@ -7,5 +7,9 @@ package com.varunbarad.popularmovies.eventlistener;
  */
 
 public interface OnFragmentInteractionListener {
-  void onFragmentInteraction(String data);
+  String TAG_MOVIE = "MOVIE";
+  String TAG_FAVORITE = "FAVORITE";
+  String TAG_UNFAVORITE = "UNFAVORITE";
+  
+  void onFragmentInteraction(String message);
 }

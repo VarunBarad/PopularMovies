@@ -24,6 +24,9 @@ import com.varunbarad.popularmovies.model.data.ReviewList;
 import com.varunbarad.popularmovies.model.data.VideoList;
 import com.varunbarad.popularmovies.util.data.MovieContract;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -34,6 +37,9 @@ import java.util.Arrays;
  */
 
 public final class Helper {
+  private static final String MESSAGE_KEY_TAG = "tag";
+  private static final String MESSAGE_KEY_DATA = "message";
+  
   public static int getScreenWidth(View view) {
     int screenSize = view.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
     int width;
@@ -229,5 +235,36 @@ public final class Helper {
         recommendations,
         similarMovies
     );
+  }
+  
+  public static String generateMessage(String tag, String data) {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put(Helper.MESSAGE_KEY_TAG, tag);
+      jsonObject.put(Helper.MESSAGE_KEY_DATA, data);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return jsonObject.toString();
+  }
+  
+  public static String getTagFromMessage(String message) {
+    try {
+      JSONObject jsonObject = new JSONObject(message);
+      return jsonObject.getString(Helper.MESSAGE_KEY_TAG);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+  
+  public static String getDataFromMessage(String message) {
+    try {
+      JSONObject jsonObject = new JSONObject(message);
+      return jsonObject.getString(Helper.MESSAGE_KEY_DATA);
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 }

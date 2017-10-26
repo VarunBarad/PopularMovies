@@ -106,7 +106,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         if ((MoviesListFragment.this.sortOrder == null) || (!MoviesListFragment.this.sortOrder.equals(sortCriteriaEntries[position]))) {
           MoviesListFragment.this.sortOrder = sortCriteriaEntries[position];
   
-          if (sortCriteriaEntries[position].equalsIgnoreCase("most popular")) {
+          if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("most popular")) {
             if (MoviesListFragment.this.isPopularRefreshNeeded()) {
               if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
                 MoviesListFragment.this.fetchPopularMovies();
@@ -116,7 +116,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
             } else {
               MoviesListFragment.this.showMovies(MoviesListFragment.this.retreivePopularMovies());
             }
-          } else if (sortCriteriaEntries[position].equalsIgnoreCase("highest rated")) {
+          } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("highest rated")) {
             if (MoviesListFragment.this.isHighestRatedRefreshNeeded()) {
               if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
                 MoviesListFragment.this.fetchHighestRatedMovies();
@@ -126,7 +126,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
             } else {
               MoviesListFragment.this.showMovies(MoviesListFragment.this.retreiveHighestRatedMovies());
             }
-          } else if (sortCriteriaEntries[position].equalsIgnoreCase("my favorites")) {
+          } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("my favorites")) {
             MoviesListFragment.this.fetchFavoriteMovies();
           }
         }
@@ -137,20 +137,35 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         
       }
     });
-    
+  
     this.dataBinding.recyclerViewMovies.setHasFixedSize(true);
-    
     this.moviesLayoutManager = new GridLayoutManager(this.getContext(), 2, LinearLayoutManager.VERTICAL, false);
     this.dataBinding.recyclerViewMovies.setLayoutManager(this.moviesLayoutManager);
-    
-    if (this.isPopularRefreshNeeded()) {
-      if (Helper.isConnectedToInternet(this.getContext())) {
-        this.fetchPopularMovies();
+  
+    this.sortOrder = this.sortCriteriaEntries[this.dataBinding.spinnerSortCriteria.getSelectedItemPosition()];
+  
+    if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("most popular")) {
+      if (MoviesListFragment.this.isPopularRefreshNeeded()) {
+        if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
+          MoviesListFragment.this.fetchPopularMovies();
+        } else {
+          MoviesListFragment.this.showNetworkError();
+        }
       } else {
-        this.showNetworkError();
+        MoviesListFragment.this.showMovies(MoviesListFragment.this.retreivePopularMovies());
       }
-    } else {
-      this.showMovies(this.retreivePopularMovies());
+    } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("highest rated")) {
+      if (MoviesListFragment.this.isHighestRatedRefreshNeeded()) {
+        if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
+          MoviesListFragment.this.fetchHighestRatedMovies();
+        } else {
+          MoviesListFragment.this.showNetworkError();
+        }
+      } else {
+        MoviesListFragment.this.showMovies(MoviesListFragment.this.retreiveHighestRatedMovies());
+      }
+    } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("my favorites")) {
+      MoviesListFragment.this.fetchFavoriteMovies();
     }
     
     return this.dataBinding.getRoot();
@@ -161,11 +176,10 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this
         .fragmentInteractionListener
         .onFragmentInteraction(
-            this
-                .moviesAdapter
-                .getMovies()
-                .get(position)
-                .toString()
+            Helper.generateMessage(
+                OnFragmentInteractionListener.TAG_MOVIE,
+                this.moviesAdapter.getMovies().get(position).toString()
+            )
         );
   }
   
@@ -212,10 +226,10 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
           @Override
           public void onResponse(Call<MovieList> call, Response<MovieList> response) {
             MoviesListFragment.this.showMovies(response.body().getResults());
-        
+  
             MoviesListFragment.this.storeHighestRatedMovies(response.body().getResults());
           }
-      
+  
           @Override
           public void onFailure(Call<MovieList> call, Throwable t) {
             MoviesListFragment.this.showNetworkError();
@@ -234,12 +248,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         do {
           favoriteMovies.add(Helper.movieStubFromMovieDetails(Helper.readOneMovie(cursor)));
         } while (cursor.moveToNext());
-        
-        this.moviesAdapter = new MoviesAdapter(favoriteMovies, this);
-        this.dataBinding.recyclerViewMovies.setAdapter(this.moviesAdapter);
-        this.dataBinding.placeholderProgress.setVisibility(View.GONE);
-        this.dataBinding.placeHolderError.setVisibility(View.GONE);
-        this.dataBinding.recyclerViewMovies.setVisibility(View.VISIBLE);
+  
+        this.showMovies(favoriteMovies);
       } else {
         this.showNoFavorites();
       }
@@ -295,6 +305,25 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
         .setVisibility(View.GONE);
     this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.GONE);
+  }
+  
+  public void addFavorite(MovieStub movieStub) {
+    if (this.sortOrder.equalsIgnoreCase("my favorites")) {
+      if (this.dataBinding.recyclerViewMovies.getVisibility() == View.VISIBLE) {
+        this.moviesAdapter.addMovie(movieStub);
+      } else {
+        this.fetchFavoriteMovies();
+      }
+    }
+  }
+  
+  public void removeFavorite(long movieId) {
+    if (this.sortOrder.equalsIgnoreCase("my favorites")) {
+      this.moviesAdapter.removeMovie(movieId);
+      if (this.moviesAdapter.getItemCount() < 1) {
+        this.showNoFavorites();
+      }
+    }
   }
   
   private boolean isPopularRefreshNeeded() {
