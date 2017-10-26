@@ -175,7 +175,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     Picasso
         .with(this.getContext())
         .load(posterUrl)
-        .error(R.drawable.ic_cloud_off_black)
+        .error(R.drawable.ic_cloud_off)
         .into(this.dataBinding.imageViewMovieDetailsPoster);
     
     String backdropUrl = MovieDbApiImageHelper.getImageUrl(
@@ -185,7 +185,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     
     Picasso.with(this.getContext())
         .load(backdropUrl)
-        .error(R.drawable.ic_cloud_off_black)
+        .error(R.drawable.ic_cloud_off)
         .into(this.dataBinding.imageViewMovieDetailsBackdrop);
   }
   
@@ -327,7 +327,6 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
   
   @Override
   public void onFailure(Call<MovieDetails> call, Throwable t) {
-    // ToDo: Pass message to users on failure
     Toast.makeText(this.dataBinding.getRoot().getContext(), "Network failure", Toast.LENGTH_SHORT).show();
     this.dismissProgressDialog();
   }

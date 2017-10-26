@@ -51,7 +51,7 @@ public class TrailerVideoAdapter extends RecyclerView.Adapter<TrailerVideoAdapte
     Picasso
         .with(context)
         .load(YouTubeApiHelper.getDefaultThumbnailUrl(this.videos.get(position).getKey()))
-        .error(R.drawable.ic_cloud_off_black)
+        .error(R.drawable.ic_cloud_off)
         .into(holder.imageViewThumbnail);
     
     holder.textviewTitle.setText(this.videos.get(position).getName());

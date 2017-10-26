@@ -18,4 +18,10 @@
         <item>Highest rated</item>
         <item>My favorites</item>
     </string-array>
+
+    <string name="PREFS_NAME">com.varunbarad.popularmovies</string>
+    <string name="PREFS_KEY_POPULAR">popular_movies</string>
+    <string name="PREFS_KEY_POPULAR_TIMESTAMP">popular_movies_timestamp</string>
+    <string name="PREFS_KEY_HIGHEST_RATED">highest_rated_movies</string>
+    <string name="PREFS_KEY_HIGHEST_RATED_TIMESTAMP">highest_rated_movies_timestamp</string>
 </resources>

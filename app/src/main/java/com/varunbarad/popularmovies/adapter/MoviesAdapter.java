@@ -57,7 +57,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         .with(holder.imageItem.getContext())
         .load(imageUrl)
         .placeholder(R.drawable.placeholder_poster)
-        .error(R.drawable.ic_cloud_off_black)
+        .error(R.drawable.ic_cloud_off)
         .into(holder.imageItem);
   }
 

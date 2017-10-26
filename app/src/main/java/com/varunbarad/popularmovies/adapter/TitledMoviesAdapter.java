@@ -63,7 +63,7 @@ public class TitledMoviesAdapter extends RecyclerView.Adapter<TitledMoviesAdapte
         .with(holder.imageViewMoviePoster.getContext())
         .load(imageUrl)
         .placeholder(R.drawable.placeholder_poster)
-        .error(R.drawable.ic_cloud_off_black)
+        .error(R.drawable.ic_cloud_off)
         .into(holder.imageViewMoviePoster);
     
     holder
