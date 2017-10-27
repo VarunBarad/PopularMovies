@@ -172,6 +172,27 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   }
   
   @Override
+  public void onResume() {
+    super.onResume();
+    
+    if (this.dataBinding.spinnerSortCriteria.getSelectedItem().toString().equalsIgnoreCase("my favorites")) {
+      Cursor cursor = this.getContext().getContentResolver().query(
+          MovieContract.Movie.FAVORITES_URI,
+          null,
+          null,
+          null,
+          null
+      );
+      if (cursor != null) {
+        if (cursor.getCount() < 1) {
+          this.showNoFavorites();
+        }
+        cursor.close();
+      }
+    }
+  }
+  
+  @Override
   public void onItemClick(int position) {
     this
         .fragmentInteractionListener
