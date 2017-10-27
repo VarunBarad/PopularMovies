@@ -154,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     }
   }
   
+  public boolean checkDualPane() {
+    return this.isDualPane;
+  }
+  
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
@@ -161,16 +165,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
       return true;
     } else {
       return super.onOptionsItemSelected(item);
-    }
-  }
-  
-  @Override
-  public void onBackPressed() {
-    super.onBackPressed();
-    if (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MoviesListFragment) {
-      if (this.getSupportActionBar() != null) {
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-      }
     }
   }
 }

@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 
 import com.google.gson.Gson;
 import com.varunbarad.popularmovies.R;
+import com.varunbarad.popularmovies.activity.MainActivity;
 import com.varunbarad.popularmovies.adapter.MoviesAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
@@ -174,6 +175,13 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   @Override
   public void onResume() {
     super.onResume();
+  
+    if (this.getActivity() instanceof MainActivity) {
+      MainActivity activity = (MainActivity) this.getActivity();
+      if (activity.getSupportActionBar() != null) {
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+      }
+    }
     
     if (this.dataBinding.spinnerSortCriteria.getSelectedItem().toString().equalsIgnoreCase("my favorites")) {
       Cursor cursor = this.getContext().getContentResolver().query(

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
+import com.varunbarad.popularmovies.activity.MainActivity;
 import com.varunbarad.popularmovies.adapter.GenreAdapter;
 import com.varunbarad.popularmovies.adapter.ReviewAdapter;
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
@@ -89,6 +90,18 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     } else {
       throw new RuntimeException(context.toString()
           + " must implement OnFragmentInteractionListener");
+    }
+  }
+  
+  @Override
+  public void onResume() {
+    super.onResume();
+    
+    if (this.getActivity() instanceof MainActivity) {
+      MainActivity activity = (MainActivity) this.getActivity();
+      if ((!activity.checkDualPane()) && (activity.getSupportActionBar() != null)) {
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+      }
     }
   }
   
