@@ -99,8 +99,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     this.sortCriteriaEntries = this.getContext().getResources().getStringArray(R.array.entries_sortCriteria);
     
-    this.dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_list, container, false);
-    
+    this.dataBinding = FragmentMoviesListBinding.inflate(inflater, container, false);
+
     this.dataBinding.spinnerSortCriteria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
