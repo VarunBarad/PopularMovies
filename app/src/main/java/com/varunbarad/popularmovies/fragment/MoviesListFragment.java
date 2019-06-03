@@ -185,7 +185,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     
     if (this.dataBinding.spinnerSortCriteria.getSelectedItem().toString().equalsIgnoreCase("my favorites")) {
       Cursor cursor = this.getContext().getContentResolver().query(
-          MovieContract.Movie.FAVORITES_URI,
+          MovieContract.Movie.getFAVORITES_URI(),
           null,
           null,
           null,
@@ -267,7 +267,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   }
   
   private void fetchFavoriteMovies() {
-    Cursor cursor = this.getContext().getContentResolver().query(MovieContract.Movie.FAVORITES_URI, null, null, null, null, null);
+    Cursor cursor = this.getContext().getContentResolver().query(MovieContract.Movie.getFAVORITES_URI(), null, null, null, null, null);
     
     if (cursor != null) {
       if (cursor.getCount() > 0) {
