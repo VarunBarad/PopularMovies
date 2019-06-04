@@ -2,26 +2,12 @@ package com.varunbarad.popularmovies.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.DisplayMetrics;
-import android.view.View;
-
 import com.google.gson.Gson;
-import com.varunbarad.popularmovies.model.data.CollectionStub;
-import com.varunbarad.popularmovies.model.data.CompanyStub;
-import com.varunbarad.popularmovies.model.data.Country;
-import com.varunbarad.popularmovies.model.data.Genre;
-import com.varunbarad.popularmovies.model.data.ImageList;
-import com.varunbarad.popularmovies.model.data.Language;
-import com.varunbarad.popularmovies.model.data.MovieDetails;
-import com.varunbarad.popularmovies.model.data.MovieList;
-import com.varunbarad.popularmovies.model.data.MovieStub;
-import com.varunbarad.popularmovies.model.data.ReviewList;
-import com.varunbarad.popularmovies.model.data.VideoList;
+import com.varunbarad.popularmovies.model.data.*;
 import com.varunbarad.popularmovies.util.data.MovieContract;
 
 import java.util.ArrayList;
@@ -33,92 +19,6 @@ import java.util.Arrays;
  * Project: PopularMovies
  */
 public final class Helper {
-  public static int getScreenWidth(View view) {
-    int screenSize = view.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-    int width;
-    if (view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-      switch (screenSize) {
-        case Configuration.SCREENLAYOUT_SIZE_SMALL:
-          width = 320;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-          width = 320;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_LARGE:
-          width = 480;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-          width = 720;
-          break;
-        default:
-          width = 480;
-          break;
-      }
-    } else {
-      switch (screenSize) {
-        case Configuration.SCREENLAYOUT_SIZE_SMALL:
-          width = 426;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-          width = 470;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_LARGE:
-          width = 640;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-          width = 960;
-          break;
-        default:
-          width = 640;
-          break;
-      }
-    }
-    return width;
-  }
-  
-  public static int getScreenHeight(View view) {
-    int screenSize = view.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-    int height;
-    if (view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      switch (screenSize) {
-        case Configuration.SCREENLAYOUT_SIZE_SMALL:
-          height = 320;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-          height = 320;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_LARGE:
-          height = 480;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-          height = 720;
-          break;
-        default:
-          height = 480;
-          break;
-      }
-    } else {
-      switch (screenSize) {
-        case Configuration.SCREENLAYOUT_SIZE_SMALL:
-          height = 426;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-          height = 470;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_LARGE:
-          height = 640;
-          break;
-        case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-          height = 960;
-          break;
-        default:
-          height = 640;
-          break;
-      }
-    }
-    return height;
-  }
-  
   public static boolean isConnectedToInternet(Context context) {
     ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
@@ -128,18 +28,6 @@ public final class Helper {
     isConnected = (activeNetwork != null) && activeNetwork.isConnected();
     
     return isConnected;
-  }
-  
-  public static int convertDpToPx(Context context, int dp) {
-    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-    int px = Math.round(dp * (metrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    return px;
-  }
-  
-  public static int convertPxToDp(Context context, int px) {
-    DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-    int dp = Math.round(px / (metrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    return dp;
   }
   
   public static void openUrlInBrowser(String url, Context context) {

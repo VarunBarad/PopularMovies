@@ -9,7 +9,6 @@ import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.model.data.MovieStub;
-import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 
 import java.util.ArrayList;
@@ -66,11 +65,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
   @Override
   public void onBindViewHolder(ViewHolder holder, int position) {
-    int imageWidth = Helper.getScreenWidth(holder.imageItem) / 2;
-
     String imageUrl = MovieDbApiImageHelper.getImageUrl(
         this.movies.get(position).getPosterPath(),
-        imageWidth
+            holder.imageItem.getWidth()
     );
 
     Picasso

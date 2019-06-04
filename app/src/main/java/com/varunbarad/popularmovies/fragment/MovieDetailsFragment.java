@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -188,29 +190,36 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     }
   }
 
-  private void fillPartialDetails(MovieStub movieStub) {
+  private void fillPartialDetails(final MovieStub movieStub) {
     this.dataBinding.textViewMovieDetailsTitle.setText(movieStub.getTitle());
 
-    String posterUrl = MovieDbApiImageHelper.getImageUrl(
-        movieStub.getPosterPath(),
-        Helper.getScreenWidth(this.dataBinding.imageViewMovieDetailsPoster) / 2
+    new Handler(Looper.getMainLooper()).postDelayed(
+            new Runnable() {
+              @Override
+              public void run() {
+                String posterUrl = MovieDbApiImageHelper.getImageUrl(
+                        movieStub.getPosterPath(),
+                        MovieDetailsFragment.this.dataBinding.imageViewMovieDetailsPoster.getWidth()
+                );
+
+                Picasso.with(MovieDetailsFragment.this.getContext())
+                        .load(posterUrl)
+                        .error(R.drawable.ic_cloud_off)
+                        .into(MovieDetailsFragment.this.dataBinding.imageViewMovieDetailsPoster);
+
+                String backdropUrl = MovieDbApiImageHelper.getImageUrl(
+                        movieStub.getBackdropPath(),
+                        MovieDetailsFragment.this.dataBinding.imageViewMovieDetailsBackdrop.getMeasuredWidth()
+                );
+
+                Picasso.with(MovieDetailsFragment.this.getContext())
+                        .load(backdropUrl)
+                        .error(R.drawable.ic_cloud_off)
+                        .into(MovieDetailsFragment.this.dataBinding.imageViewMovieDetailsBackdrop);
+              }
+            },
+            17
     );
-
-    Picasso
-        .with(this.getContext())
-        .load(posterUrl)
-        .error(R.drawable.ic_cloud_off)
-        .into(this.dataBinding.imageViewMovieDetailsPoster);
-
-    String backdropUrl = MovieDbApiImageHelper.getImageUrl(
-        movieStub.getBackdropPath(),
-        Helper.getScreenWidth(this.dataBinding.imageViewMovieDetailsBackdrop)
-    );
-
-    Picasso.with(this.getContext())
-        .load(backdropUrl)
-        .error(R.drawable.ic_cloud_off)
-        .into(this.dataBinding.imageViewMovieDetailsBackdrop);
   }
 
   private void fillDetails(final MovieDetails movie) {
