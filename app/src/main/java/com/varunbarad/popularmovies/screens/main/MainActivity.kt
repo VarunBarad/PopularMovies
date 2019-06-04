@@ -12,8 +12,8 @@ import com.varunbarad.popularmovies.databinding.ActivityMainBinding
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.fragment.MovieDetailsFragment
-import com.varunbarad.popularmovies.fragment.MoviesListFragment
 import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
 import com.varunbarad.popularmovies.util.Helper
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
 
