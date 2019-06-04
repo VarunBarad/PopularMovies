@@ -20,6 +20,7 @@ import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.activity.MainActivity;
 import com.varunbarad.popularmovies.adapter.MoviesAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding;
+import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.model.data.MovieList;
@@ -42,21 +43,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MoviesListFragment extends Fragment implements ListItemClickListener {
   private static final long ACCEPTABLE_DELAY = 10 * 60 * 1000;
-  
+
   private OnFragmentInteractionListener fragmentInteractionListener;
-  
+
   private FragmentMoviesListBinding dataBinding;
-  
+
   private RecyclerView.LayoutManager moviesLayoutManager;
   private MoviesAdapter moviesAdapter;
-  
+
   private String sortOrder;
   private String[] sortCriteriaEntries;
-  
+
   public MoviesListFragment() {
     // Required empty public constructor
   }
-  
+
   /**
    * Use this factory method to create a new instance of
    * this fragment using the provided parameters.
@@ -69,15 +70,15 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     fragment.setArguments(args);
     return fragment;
   }
-  
+
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-  
+
     }
   }
-  
+
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -88,17 +89,17 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
           + " must implement OnFragmentInteractionListener");
     }
   }
-  
+
   @Override
   public void onDetach() {
     super.onDetach();
     this.fragmentInteractionListener = null;
   }
-  
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     this.sortCriteriaEntries = this.getContext().getResources().getStringArray(R.array.entries_sortCriteria);
-    
+
     this.dataBinding = FragmentMoviesListBinding.inflate(inflater, container, false);
 
     this.dataBinding.spinnerSortCriteria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -106,7 +107,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if ((MoviesListFragment.this.sortOrder == null) || (!MoviesListFragment.this.sortOrder.equals(sortCriteriaEntries[position]))) {
           MoviesListFragment.this.sortOrder = sortCriteriaEntries[position];
-  
+
           if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("most popular")) {
             if (MoviesListFragment.this.isPopularRefreshNeeded()) {
               if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
@@ -132,19 +133,19 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
           }
         }
       }
-      
+
       @Override
       public void onNothingSelected(AdapterView<?> parent) {
-        
+
       }
     });
-  
+
     this.dataBinding.recyclerViewMovies.setHasFixedSize(true);
     this.moviesLayoutManager = new GridLayoutManager(this.getContext(), 2, LinearLayoutManager.VERTICAL, false);
     this.dataBinding.recyclerViewMovies.setLayoutManager(this.moviesLayoutManager);
-  
+
     this.sortOrder = this.sortCriteriaEntries[this.dataBinding.spinnerSortCriteria.getSelectedItemPosition()];
-  
+
     if (this.sortOrder.equalsIgnoreCase("most popular")) {
       if (this.isPopularRefreshNeeded()) {
         if (Helper.isConnectedToInternet(this.getContext())) {
@@ -168,21 +169,21 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     } else if (this.sortOrder.equalsIgnoreCase("my favorites")) {
       this.fetchFavoriteMovies();
     }
-    
+
     return this.dataBinding.getRoot();
   }
-  
+
   @Override
   public void onResume() {
     super.onResume();
-  
+
     if (this.getActivity() instanceof MainActivity) {
       MainActivity activity = (MainActivity) this.getActivity();
       if (activity.getSupportActionBar() != null) {
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
       }
     }
-    
+
     if (this.dataBinding.spinnerSortCriteria.getSelectedItem().toString().equalsIgnoreCase("my favorites")) {
       Cursor cursor = this.getContext().getContentResolver().query(
           MovieContract.Movie.getFAVORITES_URI(),
@@ -199,96 +200,92 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       }
     }
   }
-  
+
   @Override
   public void onItemClick(int position) {
-    this
-        .fragmentInteractionListener
-        .onFragmentInteraction(
-            Helper.generateMessage(
-                OnFragmentInteractionListener.TAG_MOVIE,
-                this.moviesAdapter.getMovies().get(position).toString()
-            )
-        );
+    this.fragmentInteractionListener
+        .onFragmentInteraction(new FragmentInteractionEvent.OpenMovieDetailsEvent(
+                this.moviesAdapter.getMovies().get(position)
+        ));
   }
-  
+
   private void fetchPopularMovies() {
     this.showProgress();
-    
+
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-    
+
     MovieDbApiRetroFitHelper movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper.class);
-    
+
     movieDbApiRetroFitHelper
         .getPopularMovies(1)
         .enqueue(new Callback<MovieList>() {
           @Override
           public void onResponse(Call<MovieList> call, Response<MovieList> response) {
             MoviesListFragment.this.showMovies(response.body().getResults());
-            
+
             MoviesListFragment.this.storePopularMovies(response.body().getResults());
           }
-          
+
           @Override
           public void onFailure(Call<MovieList> call, Throwable t) {
             MoviesListFragment.this.showNetworkError();
           }
         });
   }
-  
+
   private void fetchHighestRatedMovies() {
     this.showProgress();
-  
+
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-    
+
     MovieDbApiRetroFitHelper movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper.class);
-    
+
     movieDbApiRetroFitHelper
         .getHighestRatedMovies(1)
         .enqueue(new Callback<MovieList>() {
           @Override
           public void onResponse(Call<MovieList> call, Response<MovieList> response) {
             MoviesListFragment.this.showMovies(response.body().getResults());
-  
+
             MoviesListFragment.this.storeHighestRatedMovies(response.body().getResults());
           }
-  
+
           @Override
           public void onFailure(Call<MovieList> call, Throwable t) {
             MoviesListFragment.this.showNetworkError();
           }
         });
   }
-  
+
   private void fetchFavoriteMovies() {
     Cursor cursor = this.getContext().getContentResolver().query(MovieContract.Movie.getFAVORITES_URI(), null, null, null, null, null);
-    
+
     if (cursor != null) {
       if (cursor.getCount() > 0) {
         ArrayList<MovieStub> favoriteMovies = new ArrayList<>(cursor.getCount());
-        
+
         cursor.moveToFirst();
         do {
           favoriteMovies.add(Helper.movieStubFromMovieDetails(Helper.readOneMovie(cursor)));
         } while (cursor.moveToNext());
-  
+
         this.showMovies(favoriteMovies);
       } else {
         this.showNoFavorites();
       }
-      
+
       cursor.close();
     } else {
       this.showNoFavorites();
     }
   }
-  
+
   private void showNetworkError() {
     this.dataBinding.placeholderProgress
         .setVisibility(View.GONE);
@@ -299,7 +296,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.GONE);
   }
-  
+
   private void showProgress() {
     this.dataBinding.placeholderProgress
         .setVisibility(View.VISIBLE);
@@ -310,7 +307,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.GONE);
   }
-  
+
   private void showNoFavorites() {
     this.dataBinding.placeholderProgress
         .setVisibility(View.GONE);
@@ -321,11 +318,11 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.VISIBLE);
   }
-  
+
   private void showMovies(ArrayList<MovieStub> movies) {
     this.moviesAdapter = new MoviesAdapter(movies, this);
     this.dataBinding.recyclerViewMovies.setAdapter(this.moviesAdapter);
-    
+
     this.dataBinding.placeholderProgress
         .setVisibility(View.GONE);
     this.dataBinding.recyclerViewMovies
@@ -335,7 +332,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.dataBinding.placeHolderNoFavorites
         .setVisibility(View.GONE);
   }
-  
+
   public void addFavorite(MovieStub movieStub) {
     if (this.sortOrder.equalsIgnoreCase("my favorites")) {
       if (this.dataBinding.recyclerViewMovies.getVisibility() == View.VISIBLE) {
@@ -345,7 +342,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       }
     }
   }
-  
+
   public void removeFavorite(long movieId) {
     if (this.sortOrder.equalsIgnoreCase("my favorites")) {
       this.moviesAdapter.removeMovie(movieId);
@@ -354,48 +351,48 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       }
     }
   }
-  
+
   private boolean isPopularRefreshNeeded() {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
-    
+
     long lastLoadTime = preferences.getLong(this.getContext().getString(R.string.PREFS_KEY_POPULAR_TIMESTAMP), 0);
     return ((System.currentTimeMillis() - lastLoadTime) > MoviesListFragment.ACCEPTABLE_DELAY);
   }
-  
+
   private boolean isHighestRatedRefreshNeeded() {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
-    
+
     long lastLoadTime = preferences.getLong(this.getContext().getString(R.string.PREFS_KEY_HIGHEST_RATED_TIMESTAMP), 0);
     return ((System.currentTimeMillis() - lastLoadTime) > MoviesListFragment.ACCEPTABLE_DELAY);
   }
-  
+
   private void storePopularMovies(ArrayList<MovieStub> movies) {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = preferences.edit();
-    
+
     editor.putString(this.getContext().getString(R.string.PREFS_KEY_POPULAR), new Gson().toJson(movies));
     editor.putLong(this.getContext().getString(R.string.PREFS_KEY_POPULAR_TIMESTAMP), System.currentTimeMillis());
     editor.apply();
   }
-  
+
   private void storeHighestRatedMovies(ArrayList<MovieStub> movies) {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = preferences.edit();
-    
+
     editor.putString(this.getContext().getString(R.string.PREFS_KEY_HIGHEST_RATED), new Gson().toJson(movies));
     editor.putLong(this.getContext().getString(R.string.PREFS_KEY_HIGHEST_RATED_TIMESTAMP), System.currentTimeMillis());
     editor.apply();
   }
-  
+
   private ArrayList<MovieStub> retreivePopularMovies() {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
-    
+
     return new ArrayList<>(Arrays.asList(new Gson().fromJson(preferences.getString(this.getContext().getString(R.string.PREFS_KEY_POPULAR), null), MovieStub[].class)));
   }
-  
+
   private ArrayList<MovieStub> retreiveHighestRatedMovies() {
     SharedPreferences preferences = this.getContext().getSharedPreferences(this.getContext().getString(R.string.PREFS_NAME), Context.MODE_PRIVATE);
-    
+
     return new ArrayList<>(Arrays.asList(new Gson().fromJson(preferences.getString(this.getContext().getString(R.string.PREFS_KEY_HIGHEST_RATED), null), MovieStub[].class)));
   }
 }

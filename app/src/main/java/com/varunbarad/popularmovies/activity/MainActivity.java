@@ -12,12 +12,16 @@ import android.view.View;
 
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.databinding.ActivityMainBinding;
+import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.fragment.MovieDetailsFragment;
 import com.varunbarad.popularmovies.fragment.MoviesListFragment;
+import com.varunbarad.popularmovies.model.data.MovieDetails;
 import com.varunbarad.popularmovies.model.data.MovieStub;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.data.MovieContract;
+
+import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
   
@@ -110,24 +114,25 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
       }
     }
   }
-  
+
   @Override
-  public void onFragmentInteraction(String message) {
-    String tag = Helper.getTagFromMessage(message);
-    String data = Helper.getDataFromMessage(message);
-    if (OnFragmentInteractionListener.TAG_MOVIE.equals(tag)) {
-      MovieStub movieStub = MovieStub.getInstance(data);
-      this.showDetails(movieStub);
-    } else if (OnFragmentInteractionListener.TAG_FAVORITE.equals(tag)) {
-      MovieStub movieStub = MovieStub.getInstance(data);
+  public void onFragmentInteraction(@NotNull FragmentInteractionEvent event) {
+    if (event instanceof FragmentInteractionEvent.OpenMovieDetailsEvent) {
+      FragmentInteractionEvent.OpenMovieDetailsEvent movieDetailsEvent = (FragmentInteractionEvent.OpenMovieDetailsEvent) event;
+      this.showDetails(movieDetailsEvent.getMovie());
+    } else if (event instanceof FragmentInteractionEvent.AddToFavoriteEvent) {
+      FragmentInteractionEvent.AddToFavoriteEvent addToFavoriteEvent = (FragmentInteractionEvent.AddToFavoriteEvent) event;
+      MovieStub movie = addToFavoriteEvent.getMovie();
       if (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MoviesListFragment) {
         MoviesListFragment moviesListFragment = (MoviesListFragment) this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container);
-        moviesListFragment.addFavorite(movieStub);
+        moviesListFragment.addFavorite(movie);
       }
-    } else if (OnFragmentInteractionListener.TAG_UNFAVORITE.equals(tag)) {
+    } else if (event instanceof FragmentInteractionEvent.RemoveFromFavoriteEvent) {
+      FragmentInteractionEvent.RemoveFromFavoriteEvent removeFromFavoriteEvent = (FragmentInteractionEvent.RemoveFromFavoriteEvent) event;
+      long movieId = removeFromFavoriteEvent.getMovieId();
       if (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MoviesListFragment) {
         MoviesListFragment moviesListFragment = (MoviesListFragment) this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container);
-        moviesListFragment.removeFavorite(Long.valueOf(data));
+        moviesListFragment.removeFavorite(movieId);
       }
     }
   }

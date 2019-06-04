@@ -24,6 +24,7 @@ import com.varunbarad.popularmovies.adapter.ReviewAdapter;
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter;
 import com.varunbarad.popularmovies.adapter.TrailerVideoAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding;
+import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.model.data.MovieDetails;
@@ -305,10 +306,11 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         new ListItemClickListener() {
           @Override
           public void onItemClick(int position) {
-            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(Helper.generateMessage(
-                OnFragmentInteractionListener.TAG_MOVIE,
-                movie.getSimilarMovies().getResults().get(position).toString()
-            ));
+            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(
+                new FragmentInteractionEvent.OpenMovieDetailsEvent(
+                    movie.getSimilarMovies().getResults().get(position)
+                )
+            );
           }
         }
     ));
@@ -325,10 +327,11 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         new ListItemClickListener() {
           @Override
           public void onItemClick(int position) {
-            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(Helper.generateMessage(
-                OnFragmentInteractionListener.TAG_MOVIE,
-                movie.getRecommendations().getResults().get(position).toString()
-            ));
+            MovieDetailsFragment.this.fragmentInteractionListener.onFragmentInteraction(
+                new FragmentInteractionEvent.OpenMovieDetailsEvent(
+                    movie.getRecommendations().getResults().get(position)
+                )
+            );
           }
         }
     ));
@@ -420,11 +423,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       );
 
       this.fragmentInteractionListener.onFragmentInteraction(
-          Helper.generateMessage(
-              OnFragmentInteractionListener.TAG_UNFAVORITE,
-              String.valueOf(this.movieDetails.getId())
-          )
-
+          new FragmentInteractionEvent.RemoveFromFavoriteEvent(this.movieDetails.getId())
       );
     } else {
       this.isMovieFavorite = true;
@@ -440,9 +439,8 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       );
 
       this.fragmentInteractionListener.onFragmentInteraction(
-          Helper.generateMessage(
-              OnFragmentInteractionListener.TAG_FAVORITE,
-              this.movieDetails.toString()
+          new FragmentInteractionEvent.AddToFavoriteEvent(
+              Helper.movieStubFromMovieDetails(this.movieDetails)
           )
       );
     }
