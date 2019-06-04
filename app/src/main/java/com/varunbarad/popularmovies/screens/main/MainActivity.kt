@@ -11,8 +11,8 @@ import com.varunbarad.popularmovies.R
 import com.varunbarad.popularmovies.databinding.ActivityMainBinding
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
-import com.varunbarad.popularmovies.fragment.MovieDetailsFragment
 import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.screens.main.movie_details.MovieDetailsFragment
 import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
 import com.varunbarad.popularmovies.util.Helper
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
     if (this.isDualPane) {
       val movieDetailsFragment = this.supportFragmentManager.findFragmentById(R.id.fragment_main_container)
       if (movieDetailsFragment is MovieDetailsFragment) {
-        val movieId = movieDetailsFragment.movieId
+        val movieId = movieDetailsFragment.getMovieId()
         while (this.supportFragmentManager.findFragmentById(R.id.fragment_main_container) is MovieDetailsFragment) {
           this.onBackPressed()
         }
@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
     } else {
       val movieDetailsFragment = this.supportFragmentManager.findFragmentById(R.id.fragment_details_container)
       if (movieDetailsFragment is MovieDetailsFragment) {
-        val movieId = movieDetailsFragment.movieId
+        val movieId = movieDetailsFragment.getMovieId()
         movieDetailsFragment.onStop()
 
         this.supportFragmentManager
