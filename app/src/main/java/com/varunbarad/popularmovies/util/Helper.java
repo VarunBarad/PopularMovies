@@ -3,8 +3,6 @@ package com.varunbarad.popularmovies.util;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import com.google.gson.Gson;
 import com.varunbarad.popularmovies.model.data.*;
@@ -19,17 +17,6 @@ import java.util.Arrays;
  * Project: PopularMovies
  */
 public final class Helper {
-  public static boolean isConnectedToInternet(Context context) {
-    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-    
-    boolean isConnected;
-    
-    isConnected = (activeNetwork != null) && activeNetwork.isConnected();
-    
-    return isConnected;
-  }
-  
   public static void openUrlInBrowser(String url, Context context) {
     Uri websiteUri = Uri.parse(url);
     Intent websiteIntent = new Intent(Intent.ACTION_VIEW, websiteUri);

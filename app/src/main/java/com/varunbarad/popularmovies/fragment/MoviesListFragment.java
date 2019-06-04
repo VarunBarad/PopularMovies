@@ -25,6 +25,7 @@ import com.varunbarad.popularmovies.model.data.MovieStub;
 import com.varunbarad.popularmovies.screens.main.MainActivity;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
+import com.varunbarad.popularmovies.util.NetworkUtils;
 import com.varunbarad.popularmovies.util.data.MovieDbHelper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -107,7 +108,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 
           if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("most popular")) {
             if (MoviesListFragment.this.isPopularRefreshNeeded()) {
-              if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
+              if (NetworkUtils.isConnectedToInternet(MoviesListFragment.this.getContext())) {
                 MoviesListFragment.this.fetchPopularMovies();
               } else {
                 MoviesListFragment.this.showNetworkError();
@@ -117,7 +118,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
             }
           } else if (MoviesListFragment.this.sortOrder.equalsIgnoreCase("highest rated")) {
             if (MoviesListFragment.this.isHighestRatedRefreshNeeded()) {
-              if (Helper.isConnectedToInternet(MoviesListFragment.this.getContext())) {
+              if (NetworkUtils.isConnectedToInternet(MoviesListFragment.this.getContext())) {
                 MoviesListFragment.this.fetchHighestRatedMovies();
               } else {
                 MoviesListFragment.this.showNetworkError();
@@ -133,7 +134,6 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 
       @Override
       public void onNothingSelected(AdapterView<?> parent) {
-
       }
     });
 
@@ -145,7 +145,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
 
     if (this.sortOrder.equalsIgnoreCase("most popular")) {
       if (this.isPopularRefreshNeeded()) {
-        if (Helper.isConnectedToInternet(this.getContext())) {
+        if (NetworkUtils.isConnectedToInternet(this.getContext())) {
           this.fetchPopularMovies();
         } else {
           this.showNetworkError();
@@ -155,7 +155,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       }
     } else if (this.sortOrder.equalsIgnoreCase("highest rated")) {
       if (this.isHighestRatedRefreshNeeded()) {
-        if (Helper.isConnectedToInternet(this.getContext())) {
+        if (NetworkUtils.isConnectedToInternet(this.getContext())) {
           this.fetchHighestRatedMovies();
         } else {
           this.showNetworkError();
