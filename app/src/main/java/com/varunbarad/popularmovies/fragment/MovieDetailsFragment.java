@@ -2,10 +2,8 @@ package com.varunbarad.popularmovies.fragment;
 
 import android.accounts.NetworkErrorException;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,6 +32,7 @@ import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
 import com.varunbarad.popularmovies.util.data.MovieContract;
+import com.varunbarad.popularmovies.util.data.MovieDbHelper;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -52,20 +51,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetailsFragment extends Fragment implements Callback<MovieDetails> {
   private static final String KEY_MOVIE_STUB = "movie_stub";
-
+  
+  private MovieDbHelper databaseHelper;
   private OnFragmentInteractionListener fragmentInteractionListener;
   private ProgressDialog progressDialog;
-
+  
   private MovieStub movieStub;
   private MovieDetails movieDetails;
   private boolean isMovieFavorite = false;
-
+  
   private FragmentMovieDetailsBinding dataBinding;
-
+  
   public MovieDetailsFragment() {
     // Required empty public constructor
   }
-
+  
   public static MovieDetailsFragment newInstance(MovieStub movieStub) {
     MovieDetailsFragment fragment = new MovieDetailsFragment();
     Bundle args = new Bundle();
@@ -73,7 +73,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     fragment.setArguments(args);
     return fragment;
   }
-
+  
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -82,7 +82,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       this.movieStub = MovieStub.getInstance(movieStubJson);
     }
   }
-
+  
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
@@ -93,11 +93,11 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
           + " must implement OnFragmentInteractionListener");
     }
   }
-
+  
   @Override
   public void onResume() {
     super.onResume();
-
+    
     if (this.getActivity() instanceof MainActivity) {
       MainActivity activity = (MainActivity) this.getActivity();
       if ((!activity.checkDualPane()) && (activity.getSupportActionBar() != null)) {
@@ -105,29 +105,24 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       }
     }
   }
-
+  
   @Override
   public void onDetach() {
     super.onDetach();
     this.fragmentInteractionListener = null;
   }
-
+  
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     this.dataBinding = FragmentMovieDetailsBinding.inflate(inflater, container, false);
-
+    
+    this.databaseHelper = new MovieDbHelper(this.getContext());
+    
     this.fetchMovieDetails();
     this.fillPartialDetails(this.movieStub);
-
-    Cursor cursor = this.getContext().getContentResolver().query(
-        MovieContract.Movie.buildUriWithMovieId(this.movieStub.getId()),
-        null,
-        null,
-        null,
-        null
-    );
-
+    
+    Cursor cursor = this.databaseHelper.queryMovieDetails(this.movieStub.getId());
     if (cursor != null) {
       if (cursor.getCount() > 0) {
         cursor.moveToFirst();
@@ -142,13 +137,21 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     } else {
       this.showProgressDialog();
     }
-
+    
     return this.dataBinding.getRoot();
   }
-
+  
+  @Override
+  public void onDestroyView() {
+    if (this.databaseHelper != null) {
+      this.databaseHelper.close();
+    }
+    super.onDestroyView();
+  }
+  
   private void showProgressDialog() {
     this.dismissProgressDialog();
-
+  
     this.progressDialog = new ProgressDialog(this.dataBinding.getRoot().getContext());
     this.progressDialog.setIndeterminate(true);
     this.progressDialog.setTitle("Fetching content");
@@ -156,27 +159,27 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
     this.progressDialog.setCancelable(false);
     this.progressDialog.show();
   }
-
+  
   private void dismissProgressDialog() {
     if (this.progressDialog != null && this.progressDialog.isShowing()) {
       this.progressDialog.dismiss();
       this.progressDialog = null;
     }
   }
-
+  
   private void fetchMovieDetails() {
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
-
+    
     MovieDbApiRetroFitHelper movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper.class);
-
+    
     movieDbApiRetroFitHelper
         .getMovieDetails(this.movieStub.getId())
         .enqueue(this);
   }
-
+  
   public long getMovieId() {
     if (this.movieDetails != null) {
       return this.movieDetails.getId();
@@ -184,32 +187,32 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
       return this.movieStub.getId();
     }
   }
-
+  
   private void fillPartialDetails(MovieStub movieStub) {
     this.dataBinding.textViewMovieDetailsTitle.setText(movieStub.getTitle());
-
+    
     String posterUrl = MovieDbApiImageHelper.getImageUrl(
         movieStub.getPosterPath(),
         Helper.getScreenWidth(this.dataBinding.imageViewMovieDetailsPoster) / 2
     );
-
+    
     Picasso
         .with(this.getContext())
         .load(posterUrl)
         .error(R.drawable.ic_cloud_off)
         .into(this.dataBinding.imageViewMovieDetailsPoster);
-
+    
     String backdropUrl = MovieDbApiImageHelper.getImageUrl(
         movieStub.getBackdropPath(),
         Helper.getScreenWidth(this.dataBinding.imageViewMovieDetailsBackdrop)
     );
-
+    
     Picasso.with(this.getContext())
         .load(backdropUrl)
         .error(R.drawable.ic_cloud_off)
         .into(this.dataBinding.imageViewMovieDetailsBackdrop);
   }
-
+  
   private void fillDetails(final MovieDetails movie) {
     if (this.isMovieFavorite) {
       this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite);
@@ -222,7 +225,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         MovieDetailsFragment.this.toggleFavorite();
       }
     });
-
+    
     if (movie.getVideos().getResults().isEmpty() || (this.getVideoUrl(movie) == null)) {
       this.dataBinding.imageButtonMovieDetailsVideos.setVisibility(View.GONE);
     } else {
@@ -233,13 +236,13 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         }
       });
     }
-
+    
     this.dataBinding.textViewMovieDetailsOverview.setText(movie.getOverview());
-
+    
     this.dataBinding.linearLayoutMovieDetailsAdult.setVisibility(movie.isAdult() ? View.VISIBLE : View.GONE);
-
+    
     this.dataBinding.textViewMovieDetailsRuntime.setText(String.valueOf(movie.getRuntime()));
-
+    
     if (movie.getReviews().getResults().isEmpty()) {
       this.dataBinding.linearLayoutMovieDetailsReviews.setVisibility(View.GONE);
     } else {
@@ -250,7 +253,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         }
       });
     }
-
+    
     if ((movie.getHomepage() == null) || movie.getHomepage().trim().isEmpty()) {
       this.dataBinding.linearLayoutMovieDetailsWebsite.setVisibility(View.GONE);
     } else {
@@ -264,7 +267,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         }
       });
     }
-
+    
     if (movie.getVideos().getResults().isEmpty()) {
       this.dataBinding.linearLayoutMovieDetailsVideos.setVisibility(View.GONE);
     } else {
@@ -275,13 +278,13 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         }
       });
     }
-
+    
     this.dataBinding.textViewMovieDetailsReleaseDate.setText(movie.getReleaseDate());
-
+    
     this.dataBinding.ratingBarMovieDetailsRating.setRating((float) (movie.getAverageVote() / 2.0d));
-
+    
     this.dataBinding.textViewMovieDetailsRating.setText(String.format(Locale.getDefault(), "%.1f (%d)", ((float) (movie.getAverageVote() / 2.0d)), movie.getNumberOfVotes()));
-
+    
     this.dataBinding.recyclerViewMovieDetailsGenres.setLayoutManager(new LinearLayoutManager(
         this.dataBinding.recyclerViewMovieDetailsGenres.getContext(),
         LinearLayoutManager.HORIZONTAL,
@@ -293,7 +296,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         Toast.makeText(getContext(), String.format(Locale.getDefault(), "%s selected", movie.getGenres().get(position).getName()), Toast.LENGTH_SHORT).show();
       }
     }));
-
+    
     this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setHasFixedSize(true);
     this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setNestedScrollingEnabled(false);
     this.dataBinding.recyclerViewMovieDetailsSimilarMovies.setLayoutManager(new LinearLayoutManager(
@@ -314,7 +317,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
           }
         }
     ));
-
+    
     this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setHasFixedSize(true);
     this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setNestedScrollingEnabled(false);
     this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setLayoutManager(new LinearLayoutManager(
@@ -336,7 +339,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         }
     ));
   }
-
+  
   @Override
   public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
     if (this.isVisible()) {
@@ -346,39 +349,36 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
         this.movieDetails = response.body();
         this.dismissProgressDialog();
         this.fillDetails(this.movieDetails);
-
+  
         // Save the movie-details to database
-        this.getContext().getContentResolver().insert(
-            MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
-            this.movieDetails.toContentValues(isMovieFavorite)
-        );
+        this.databaseHelper.insertMovieDetails(this.movieDetails, this.isMovieFavorite);
       }
     }
   }
-
+  
   @Override
   public void onFailure(Call<MovieDetails> call, Throwable t) {
     Toast.makeText(this.dataBinding.getRoot().getContext(), "Network failure", Toast.LENGTH_SHORT).show();
     this.dismissProgressDialog();
   }
-
+  
   private String getVideoUrl(MovieDetails movie) {
     ArrayList<Video> videos = movie.getVideos().getResults();
     String videoUrl = null;
-
+    
     for (Video v : videos) {
       if ((v != null) && (v.getVideoUrl() != null)) {
         videoUrl = v.getVideoUrl();
         break;
       }
     }
-
+    
     return videoUrl;
   }
-
+  
   private void showReviews() {
     ReviewAdapter reviewAdapter = new ReviewAdapter(this.getContext(), this.movieDetails.getReviews().getResults());
-
+    
     MaterialDialog reviewDialog =
         new MaterialDialog.Builder(this.getContext())
             .title(R.string.label_reviews)
@@ -388,13 +388,13 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
             .cancelable(true)
             .neutralText(R.string.label_ok)
             .build();
-
+    
     reviewDialog.show();
   }
-
+  
   private void showVideos() {
     TrailerVideoAdapter trailerVideoAdapter = new TrailerVideoAdapter(this.getContext(), this.movieDetails.getVideos().getResults());
-
+    
     MaterialDialog reviewDialog =
         new MaterialDialog.Builder(this.getContext())
             .title(R.string.label_view_videos)
@@ -404,40 +404,32 @@ public class MovieDetailsFragment extends Fragment implements Callback<MovieDeta
             .cancelable(true)
             .neutralText(R.string.label_ok)
             .build();
-
+    
     reviewDialog.show();
   }
-
+  
   private void toggleFavorite() {
     if (this.isMovieFavorite) {
       this.isMovieFavorite = false;
       this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite_border);
-
-      ContentValues updateValues = new ContentValues();
-      updateValues.put(MovieContract.Movie.COLUMN_IS_FAVORITE, 0);
-      this.getContext().getContentResolver().update(
-          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
-          updateValues,
-          null,
-          null
+  
+      this.databaseHelper.updateMovieFavoriteStatus(
+          this.movieDetails.getId(),
+          this.isMovieFavorite
       );
-
+  
       this.fragmentInteractionListener.onFragmentInteraction(
           new FragmentInteractionEvent.RemoveFromFavoriteEvent(this.movieDetails.getId())
       );
     } else {
       this.isMovieFavorite = true;
       this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite);
-
-      ContentValues updateValues = new ContentValues();
-      updateValues.put(MovieContract.Movie.COLUMN_IS_FAVORITE, 1);
-      this.getContext().getContentResolver().update(
-          MovieContract.Movie.buildUriWithMovieId(this.movieDetails.getId()),
-          updateValues,
-          null,
-          null
+  
+      this.databaseHelper.updateMovieFavoriteStatus(
+          this.movieDetails.getId(),
+          this.isMovieFavorite
       );
-
+  
       this.fragmentInteractionListener.onFragmentInteraction(
           new FragmentInteractionEvent.AddToFavoriteEvent(
               Helper.movieStubFromMovieDetails(this.movieDetails)

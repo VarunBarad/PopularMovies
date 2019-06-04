@@ -16,14 +16,14 @@ import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.fragment.MovieDetailsFragment;
 import com.varunbarad.popularmovies.fragment.MoviesListFragment;
-import com.varunbarad.popularmovies.model.data.MovieDetails;
 import com.varunbarad.popularmovies.model.data.MovieStub;
 import com.varunbarad.popularmovies.util.Helper;
-import com.varunbarad.popularmovies.util.data.MovieContract;
+import com.varunbarad.popularmovies.util.data.MovieDbHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+  private MovieDbHelper databaseHelper;
   
   private ActivityMainBinding dataBinding;
   
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+  
+    this.databaseHelper = new MovieDbHelper(this);
   
     {
       View v = findViewById(R.id.fragment_details_container);
@@ -66,14 +68,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         while (this.getSupportFragmentManager().findFragmentById(R.id.fragment_main_container) instanceof MovieDetailsFragment) {
           this.onBackPressed();
         }
-      
-        Cursor cursor = this.getContentResolver().query(
-            MovieContract.Movie.buildUriWithMovieId(movieId),
-            null,
-            null,
-            null,
-            null
-        );
+  
+        Cursor cursor = this.databaseHelper.queryMovieDetails(movieId);
       
         if (cursor != null) {
           if (cursor.getCount() > 0) {
@@ -94,14 +90,8 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             .beginTransaction()
             .remove(movieDetailsFragment)
             .commit();
-      
-        Cursor cursor = this.getContentResolver().query(
-            MovieContract.Movie.buildUriWithMovieId(movieId),
-            null,
-            null,
-            null,
-            null
-        );
+  
+        Cursor cursor = this.databaseHelper.queryMovieDetails(movieId);
       
         if (cursor != null) {
           if (cursor.getCount() > 0) {
@@ -171,5 +161,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     } else {
       return super.onOptionsItemSelected(item);
     }
+  }
+  
+  @Override
+  protected void onDestroy() {
+    if (this.databaseHelper != null) {
+      this.databaseHelper.close();
+    }
+    super.onDestroy();
   }
 }

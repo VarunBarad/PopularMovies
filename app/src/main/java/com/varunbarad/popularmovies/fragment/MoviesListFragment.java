@@ -3,7 +3,6 @@ package com.varunbarad.popularmovies.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,7 +26,7 @@ import com.varunbarad.popularmovies.model.data.MovieList;
 import com.varunbarad.popularmovies.model.data.MovieStub;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
-import com.varunbarad.popularmovies.util.data.MovieContract;
+import com.varunbarad.popularmovies.util.data.MovieDbHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +44,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   private static final long ACCEPTABLE_DELAY = 10 * 60 * 1000;
 
   private OnFragmentInteractionListener fragmentInteractionListener;
+  
+  private MovieDbHelper databaseHelper;
 
   private FragmentMoviesListBinding dataBinding;
 
@@ -75,7 +76,6 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-
     }
   }
 
@@ -101,6 +101,8 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     this.sortCriteriaEntries = this.getContext().getResources().getStringArray(R.array.entries_sortCriteria);
 
     this.dataBinding = FragmentMoviesListBinding.inflate(inflater, container, false);
+  
+    this.databaseHelper = new MovieDbHelper(this.getContext());
 
     this.dataBinding.spinnerSortCriteria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
@@ -185,13 +187,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
     }
 
     if (this.dataBinding.spinnerSortCriteria.getSelectedItem().toString().equalsIgnoreCase("my favorites")) {
-      Cursor cursor = this.getContext().getContentResolver().query(
-          MovieContract.Movie.getFAVORITES_URI(),
-          null,
-          null,
-          null,
-          null
-      );
+      Cursor cursor = this.databaseHelper.queryFavoriteMovies();
       if (cursor != null) {
         if (cursor.getCount() < 1) {
           this.showNoFavorites();
@@ -200,12 +196,20 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
       }
     }
   }
-
+  
+  @Override
+  public void onDestroy() {
+    if (this.databaseHelper != null) {
+      this.databaseHelper.close();
+    }
+    super.onDestroy();
+  }
+  
   @Override
   public void onItemClick(int position) {
     this.fragmentInteractionListener
         .onFragmentInteraction(new FragmentInteractionEvent.OpenMovieDetailsEvent(
-                this.moviesAdapter.getMovies().get(position)
+            this.moviesAdapter.getMovies().get(position)
         ));
   }
 
@@ -264,8 +268,7 @@ public class MoviesListFragment extends Fragment implements ListItemClickListene
   }
 
   private void fetchFavoriteMovies() {
-    Cursor cursor = this.getContext().getContentResolver().query(MovieContract.Movie.getFAVORITES_URI(), null, null, null, null, null);
-
+    Cursor cursor = this.databaseHelper.queryFavoriteMovies();
     if (cursor != null) {
       if (cursor.getCount() > 0) {
         ArrayList<MovieStub> favoriteMovies = new ArrayList<>(cursor.getCount());
