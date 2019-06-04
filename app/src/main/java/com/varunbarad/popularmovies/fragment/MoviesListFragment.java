@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 
 import com.google.gson.Gson;
 import com.varunbarad.popularmovies.R;
-import com.varunbarad.popularmovies.activity.MainActivity;
 import com.varunbarad.popularmovies.adapter.MoviesAdapter;
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding;
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent;
@@ -24,6 +23,7 @@ import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener;
 import com.varunbarad.popularmovies.model.data.MovieList;
 import com.varunbarad.popularmovies.model.data.MovieStub;
+import com.varunbarad.popularmovies.screens.main.MainActivity;
 import com.varunbarad.popularmovies.util.Helper;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper;
 import com.varunbarad.popularmovies.util.data.MovieDbHelper;
@@ -37,9 +37,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MoviesListFragment extends Fragment implements ListItemClickListener {
   private static final long ACCEPTABLE_DELAY = 10 * 60 * 1000;
 
