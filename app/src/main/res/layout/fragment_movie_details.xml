@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView_movieDetails_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_movieDetails_backdrop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/imageButton_movieDetails_videos"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -37,7 +37,7 @@
                 app:layout_constraintTop_toTopOf="@+id/imageView_movieDetails_backdrop"
                 app:srcCompat="@drawable/ic_play_circle_filled" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageView_movieDetails_poster"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_backdrop" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/floatingActionButton_movieDetails_favorite"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
@@ -62,7 +62,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageView_movieDetails_backdrop"
                 app:srcCompat="@drawable/ic_favorite_border" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_title" />
 
-            <android.support.v4.widget.Space
+            <Space
                 android:id="@+id/space_icons_start"
                 android:layout_width="16dp"
                 android:layout_height="0dp"
@@ -99,7 +99,7 @@
                 app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_adult"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime" />
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_adult"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
                 app:layout_constraintVertical_bias="0.0"
                 tools:visibility="visible">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imageView_movieDetails_adult_icon"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
@@ -124,16 +124,16 @@
                     android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_report" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_adult_icon"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/label_adult_only"
                     android:textSize="12sp" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_runtime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -144,11 +144,11 @@
                 app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_reviews"
                 app:layout_constraintTop_toBottomOf="@+id/separator_title_icons">
 
-                <android.support.v4.widget.Space
+                <Space
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_runtime"
                     android:layout_width="60dp"
                     android:layout_height="45dp"
@@ -162,19 +162,19 @@
                     android:textSize="20sp"
                     tools:text="133" />
 
-                <android.support.v4.widget.Space
+                <Space
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/label_runtime"
                     android:textSize="12sp" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_reviews"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                 app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_website"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:paddingTop="5dp"
@@ -195,15 +195,15 @@
                     android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_account_circle" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/label_reviews"
                     android:textSize="12sp" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_website"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
                 app:layout_constraintRight_toLeftOf="@+id/linearLayout_movieDetails_videos"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:paddingTop="5dp"
@@ -224,15 +224,15 @@
                     android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_globe" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/label_visit_website"
                     android:textSize="12sp" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_videos"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
                 app:layout_constraintRight_toLeftOf="@+id/space_icons_end"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout_movieDetails_runtime">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:paddingTop="5dp"
@@ -253,15 +253,15 @@
                     android:tint="@color/colorPrimary"
                     app:srcCompat="@drawable/ic_video_library" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/label_view_videos"
                     android:textSize="12sp" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v4.widget.Space
+            <Space
                 android:id="@+id/space_icons_end"
                 android:layout_width="16dp"
                 android:layout_height="0dp"
@@ -284,7 +284,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout_movieDetails_runtime" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_overview_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -296,7 +296,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/separator_icons_overview" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_overview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -322,7 +322,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_overview" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_releaseDate_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -335,7 +335,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/separator_overview_ratings" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_releaseDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -344,7 +344,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 tools:text="16-12-2016" />
 
-            <android.support.v7.widget.AppCompatRatingBar
+            <androidx.appcompat.widget.AppCompatRatingBar
                 android:id="@+id/ratingBar_movieDetails_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
@@ -356,7 +356,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_releaseDate_label" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_movieDetails_rating"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -381,7 +381,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_movieDetails_rating" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_movieDetails_genres"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -408,7 +408,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_movieDetails_genres" />
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_similarMoviesTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -422,7 +422,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/separator_genres_similarMovies">
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_similarMovies_label"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -431,9 +431,9 @@
                     android:text="@string/label_similar"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_movieDetails_similarMovies"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -460,7 +460,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_movieDetails_similarMovies" />
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/linearLayout_movieDetails_recommendedMoviesTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -474,7 +474,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/separator_similarMovies_recommendedMovies">
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textView_movieDetails_recommendedMovies_label"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -483,9 +483,9 @@
                     android:text="@string/label_you_may_also_like"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_movieDetails_recommendedMovies"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -498,13 +498,13 @@
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="25dp" />
 
-            <android.support.v4.widget.Space
+            <Space
                 android:id="@+id/space_bottom"
                 android:layout_width="0dp"
                 android:layout_height="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_movieDetails_recommendedMovies" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

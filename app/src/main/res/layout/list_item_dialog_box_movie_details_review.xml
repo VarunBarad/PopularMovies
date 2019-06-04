@@ -7,12 +7,12 @@
     android:layout_margin="4dp"
     app:cardElevation="6dp">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textView_listItemMovieDetailsReview_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Gimly" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textView_listItemMovieDetailsReview_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView_listItemMovieDetailsReview_author"
             tools:text="There's now officially (not at all officially, more like just-my-opinion-ally) twice as many good Spider-Man movies as there is bad ones. But _Homecoming_ is my favourite of the bunch. 2017 has been..." />
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textView_listItemMovieDetailsReview_showMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,5 +49,5 @@
             android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_listItemMovieDetailsReview_content" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </android.support.v7.widget.CardView>
