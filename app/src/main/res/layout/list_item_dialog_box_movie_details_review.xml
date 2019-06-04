@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,36 +20,34 @@
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="@+id/textView_listItemMovieDetailsReview_content"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Gimly"/>
+            tools:text="Gimly" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textView_listItemMovieDetailsReview_content"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_listItemMovieDetailsReview_author"
-            tools:text="There's now officially (not at all officially, more like just-my-opinion-ally) twice as many good Spider-Man movies as there is bad ones. But _Homecoming_ is my favourite of the bunch. 2017 has been..."/>
+            tools:text="There's now officially (not at all officially, more like just-my-opinion-ally) twice as many good Spider-Man movies as there is bad ones. But _Homecoming_ is my favourite of the bunch. 2017 has been..." />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textView_listItemMovieDetailsReview_showMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:background="?android:selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
             android:text="@string/label_more"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_listItemMovieDetailsReview_content"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView_listItemMovieDetailsReview_content" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
