@@ -14,8 +14,8 @@ import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.movie_details.MovieDetailsFragment
 import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
-import com.varunbarad.popularmovies.util.Helper
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
+import com.varunbarad.popularmovies.util.readOneMovie
 
 class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
   private val databaseHelper: MovieDbHelper = MovieDbHelper(this)
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         if (cursor != null) {
           if (cursor.count > 0) {
             cursor.moveToFirst()
-            this.showDetails(Helper.movieStubFromMovieDetails(Helper.readOneMovie(cursor)))
+            this.showDetails(cursor.readOneMovie().toMovieStub())
           }
 
           cursor.close()
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
         if (cursor != null) {
           if (cursor.count > 0) {
             cursor.moveToFirst()
-            this.showDetails(Helper.movieStubFromMovieDetails(Helper.readOneMovie(cursor)))
+            this.showDetails(cursor.readOneMovie().toMovieStub())
           }
 
           cursor.close()

@@ -32,11 +32,12 @@ import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
 import com.varunbarad.popularmovies.util.MovieDbApi.getImageUrl
 import com.varunbarad.popularmovies.util.data.MovieContract
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
+import com.varunbarad.popularmovies.util.readOneMovie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.*
 
 /**
@@ -64,7 +65,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         val arguments = this.arguments
         if (arguments != null) {
             val movieStubJson = arguments.getString(KEY_MOVIE_STUB) ?: "{}"
-            this.movieStub = MovieStub.getInstance(movieStubJson)
+            this.movieStub = MovieStub.getInstance(movieStubJson)!!
         }
     }
 
@@ -107,7 +108,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         if (cursor != null) {
             if (cursor.count > 0) {
                 cursor.moveToFirst()
-                val movieDetails = Helper.readOneMovie(cursor)
+                val movieDetails = cursor.readOneMovie()
                 this.movieDetails = movieDetails
                 this.isMovieFavorite =
                     (cursor.getInt(cursor.getColumnIndex(MovieContract.Movie.COLUMN_IS_FAVORITE)) == 1)
@@ -152,7 +153,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
     private fun fetchMovieDetails(movieId: Long) {
         val retrofit = Retrofit.Builder()
             .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
@@ -206,24 +207,23 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
 
         this.dataBinding.textViewMovieDetailsRuntime.text = movie.runtime.toString()
 
-        if (movie.reviews.results.isNotEmpty()) {
+        if (movie.reviews?.results?.isNotEmpty() == true) {
             this.dataBinding.linearLayoutMovieDetailsReviews.visibility = View.VISIBLE
             this.dataBinding.linearLayoutMovieDetailsReviews.setOnClickListener { this.showReviews() }
         } else {
             this.dataBinding.linearLayoutMovieDetailsReviews.visibility = View.GONE
         }
 
-        val homepage = movie.homepage?.trim()
-        if (homepage?.isNotBlank() == true) {
+        if (movie.homepage.isNotBlank()) {
             this.dataBinding.linearLayoutMovieDetailsWebsite.visibility = View.VISIBLE
             this.dataBinding.linearLayoutMovieDetailsWebsite.setOnClickListener {
-                Helper.openUrlInBrowser(homepage, this.requireContext())
+                Helper.openUrlInBrowser(movie.homepage.trim(), this.requireContext())
             }
         } else {
             this.dataBinding.linearLayoutMovieDetailsWebsite.visibility = View.GONE
         }
 
-        if (movie.videos.results.isNotEmpty()) {
+        if (movie.videos?.results?.isNotEmpty() == true) {
             this.dataBinding.linearLayoutMovieDetailsVideos.visibility = View.VISIBLE
             this.dataBinding.linearLayoutMovieDetailsVideos.setOnClickListener { this.showVideos() }
         } else {
@@ -260,13 +260,12 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.adapter = TitledMoviesAdapter(
-            movie.similarMovies.results
-        ) { position ->
-            this.fragmentInteractionListener?.onFragmentInteraction(
-                FragmentInteractionEvent.OpenMovieDetailsEvent(movie.similarMovies.results[position])
-            )
-        }
+        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.adapter =
+            TitledMoviesAdapter(movie.similarMovies?.results) { position ->
+                this.fragmentInteractionListener?.onFragmentInteraction(
+                    FragmentInteractionEvent.OpenMovieDetailsEvent(movie.similarMovies?.results?.get(position)!!)
+                )
+            }
 
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setHasFixedSize(true)
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.isNestedScrollingEnabled = false
@@ -276,10 +275,10 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
             false
         )
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.adapter = TitledMoviesAdapter(
-            movie.recommendations.results
+            movie.recommendations?.results
         ) { position ->
             this.fragmentInteractionListener?.onFragmentInteraction(
-                FragmentInteractionEvent.OpenMovieDetailsEvent(movie.recommendations.results[position])
+                FragmentInteractionEvent.OpenMovieDetailsEvent(movie.recommendations?.results?.get(position)!!)
             )
         }
     }
@@ -306,7 +305,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
     }
 
     private fun getVideoUrl(movie: MovieDetails): String? {
-        return movie.videos.results.map { it?.videoUrl }.find { it != null }
+        return movie.videos?.results?.map { it.getVideoUrl() }?.find { it != null }
     }
 
     private fun showReviews() {
@@ -356,7 +355,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
                 this.databaseHelper.updateMovieFavoriteStatus(movieDetails.id, true)
 
                 this.fragmentInteractionListener?.onFragmentInteraction(
-                    FragmentInteractionEvent.AddToFavoriteEvent(Helper.movieStubFromMovieDetails(movieDetails))
+                    FragmentInteractionEvent.AddToFavoriteEvent(movieDetails.toMovieStub())
                 )
             }
         } else {

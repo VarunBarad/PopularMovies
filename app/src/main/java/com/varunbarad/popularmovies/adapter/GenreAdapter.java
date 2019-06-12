@@ -9,7 +9,7 @@ import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.model.data.Genre;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creator: vbarad
@@ -18,15 +18,15 @@ import java.util.ArrayList;
  */
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.ViewHolder> implements ListItemClickListener {
-  private ArrayList<Genre> genres;
+  private List<Genre> genres;
   private ListItemClickListener itemClickListener;
-  
-  public GenreAdapter(ArrayList<Genre> genres, ListItemClickListener itemClickListener) {
+
+  public GenreAdapter(List<Genre> genres, ListItemClickListener itemClickListener) {
     this.genres = genres;
     this.itemClickListener = itemClickListener;
   }
-  
-  public ArrayList<Genre> getGenres() {
+
+  public List<Genre> getGenres() {
     return this.genres;
   }
   

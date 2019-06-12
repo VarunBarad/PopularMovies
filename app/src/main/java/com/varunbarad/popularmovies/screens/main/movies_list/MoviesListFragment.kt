@@ -9,7 +9,8 @@ import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.varunbarad.popularmovies.R
 import com.varunbarad.popularmovies.adapter.MoviesAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding
@@ -19,15 +20,15 @@ import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.model.data.MovieList
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
-import com.varunbarad.popularmovies.util.Helper
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
 import com.varunbarad.popularmovies.util.isConnectedToInternet
+import com.varunbarad.popularmovies.util.readOneMovie
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Creator: Varun Barad
@@ -188,7 +189,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         val retrofit = Retrofit.Builder()
             .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
@@ -217,7 +218,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         val retrofit = Retrofit.Builder()
             .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
@@ -249,7 +250,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
                 cursor.moveToFirst()
                 do {
-                    favoriteMovies.add(Helper.movieStubFromMovieDetails(Helper.readOneMovie(cursor)))
+                    favoriteMovies.add(cursor.readOneMovie().toMovieStub())
                 } while (cursor.moveToNext())
 
                 this.showMovies(favoriteMovies)
@@ -363,7 +364,15 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         val editor = preferences?.edit()
 
         if (editor != null) {
-            editor.putString(this.context?.getString(R.string.PREFS_KEY_POPULAR), Gson().toJson(movies))
+            editor.putString(
+                this.context?.getString(R.string.PREFS_KEY_POPULAR),
+                Moshi.Builder().build().adapter<List<MovieStub>>(
+                    Types.newParameterizedType(
+                        List::class.java,
+                        MovieStub::class.java
+                    )
+                ).toJson(movies)
+            )
             editor.putLong(
                 this.context?.getString(R.string.PREFS_KEY_POPULAR_TIMESTAMP),
                 System.currentTimeMillis()
@@ -380,7 +389,15 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         val editor = preferences?.edit()
 
         if (editor != null) {
-            editor.putString(this.context?.getString(R.string.PREFS_KEY_HIGHEST_RATED), Gson().toJson(movies))
+            editor.putString(
+                this.context?.getString(R.string.PREFS_KEY_HIGHEST_RATED),
+                Moshi.Builder().build().adapter<List<MovieStub>>(
+                    Types.newParameterizedType(
+                        List::class.java,
+                        MovieStub::class.java
+                    )
+                ).toJson(movies)
+            )
             editor.putLong(
                 this.context?.getString(R.string.PREFS_KEY_HIGHEST_RATED_TIMESTAMP),
                 System.currentTimeMillis()
@@ -395,10 +412,14 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
             Context.MODE_PRIVATE
         )
 
-        return Gson().fromJson(
-            preferences?.getString(this.context?.getString(R.string.PREFS_KEY_POPULAR), "[]") ?: "[]",
-            Array<MovieStub>::class.java
-        ).toList()
+        return Moshi.Builder().build().adapter<List<MovieStub>>(
+            Types.newParameterizedType(
+                List::class.java,
+                MovieStub::class.java
+            )
+        ).fromJson(
+            preferences?.getString(this.context?.getString(R.string.PREFS_KEY_POPULAR), "[]") ?: "[]"
+        ) ?: emptyList()
     }
 
     private fun retrieveHighestRatedMovies(): List<MovieStub> {
@@ -407,10 +428,14 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
             Context.MODE_PRIVATE
         )
 
-        return Gson().fromJson(
-            preferences?.getString(this.context?.getString(R.string.PREFS_KEY_HIGHEST_RATED), "[]") ?: "[]",
-            Array<MovieStub>::class.java
-        ).toList()
+        return Moshi.Builder().build().adapter<List<MovieStub>>(
+            Types.newParameterizedType(
+                List::class.java,
+                MovieStub::class.java
+            )
+        ).fromJson(
+            preferences?.getString(this.context?.getString(R.string.PREFS_KEY_HIGHEST_RATED), "[]") ?: "[]"
+        ) ?: emptyList()
     }
 
     companion object {

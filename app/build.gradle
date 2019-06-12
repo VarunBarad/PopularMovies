@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion toolVersions.android.targetSdkVersion
@@ -43,9 +44,13 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:${libraryVersions.androidX.constraintLayout}"
     implementation "androidx.constraintlayout:constraintlayout-solver:${libraryVersions.androidX.constraintLayout}"
 
+    // Moshi
+    implementation "com.squareup.moshi:moshi:${libraryVersions.moshi}"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:${libraryVersions.moshi}"
+
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:${libraryVersions.retrofit}"
-    implementation "com.squareup.retrofit2:converter-gson:${libraryVersions.retrofit}"
+    implementation "com.squareup.retrofit2:converter-moshi:${libraryVersions.retrofit}"
 
     // Picasso
     implementation "com.squareup.picasso:picasso:${libraryVersions.picasso}"

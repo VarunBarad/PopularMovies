@@ -13,7 +13,7 @@ import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
 import com.varunbarad.popularmovies.model.data.MovieStub;
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creator: vbarad
@@ -22,15 +22,15 @@ import java.util.ArrayList;
  */
 
 public class TitledMoviesAdapter extends RecyclerView.Adapter<TitledMoviesAdapter.ViewHolder> implements ListItemClickListener {
-  private ArrayList<MovieStub> movies;
+    private List<MovieStub> movies;
   private ListItemClickListener itemClickListener;
-  
-  public TitledMoviesAdapter(ArrayList<MovieStub> movies, ListItemClickListener itemClickListener) {
+
+    public TitledMoviesAdapter(List<MovieStub> movies, ListItemClickListener itemClickListener) {
     this.movies = movies;
     this.itemClickListener = itemClickListener;
   }
-  
-  public ArrayList<MovieStub> getMovies() {
+
+    public List<MovieStub> getMovies() {
     return this.movies;
   }
   
