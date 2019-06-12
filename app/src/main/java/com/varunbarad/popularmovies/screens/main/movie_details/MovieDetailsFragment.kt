@@ -27,11 +27,12 @@ import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.model.data.MovieDetails
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
-import com.varunbarad.popularmovies.util.Helper
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
 import com.varunbarad.popularmovies.util.MovieDbApi.getImageUrl
 import com.varunbarad.popularmovies.util.data.MovieContract
 import com.varunbarad.popularmovies.util.data.MovieDbHelper
+import com.varunbarad.popularmovies.util.openUrlInBrowser
+import com.varunbarad.popularmovies.util.openYouTubeVideo
 import com.varunbarad.popularmovies.util.readOneMovie
 import retrofit2.Call
 import retrofit2.Callback
@@ -195,7 +196,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         if (videoUrl != null) {
             this.dataBinding.imageButtonMovieDetailsVideos.visibility = View.VISIBLE
             this.dataBinding.imageButtonMovieDetailsVideos.setOnClickListener {
-                Helper.openYouTubeVideo(videoUrl, this.requireContext())
+                this.requireContext().openYouTubeVideo(videoUrl)
             }
         } else {
             this.dataBinding.imageButtonMovieDetailsVideos.visibility = View.GONE
@@ -217,7 +218,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         if (movie.homepage.isNotBlank()) {
             this.dataBinding.linearLayoutMovieDetailsWebsite.visibility = View.VISIBLE
             this.dataBinding.linearLayoutMovieDetailsWebsite.setOnClickListener {
-                Helper.openUrlInBrowser(movie.homepage.trim(), this.requireContext())
+                this.requireContext().openUrlInBrowser(movie.homepage.trim())
             }
         } else {
             this.dataBinding.linearLayoutMovieDetailsWebsite.visibility = View.GONE
