@@ -18,6 +18,11 @@ buildscript {
 
         libraryVersions = [
                 kotlin        : '1.3.31',
+                rxJava        : [
+                        rxJava2  : '2.2.3',
+                        rxKotlin : '2.3.0',
+                        rxAndroid: '2.1.0'
+                ],
                 androidX      : [
                         appCompat         : '1.0.2',
                         materialComponents: '1.1.0-alpha07',

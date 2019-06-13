@@ -36,6 +36,11 @@ dependencies {
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${libraryVersions.kotlin}"
 
+    // RxJava
+    implementation "io.reactivex.rxjava2:rxjava:${libraryVersions.rxJava.rxJava2}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${libraryVersions.rxJava.rxKotlin}"
+    implementation "io.reactivex.rxjava2:rxandroid:${libraryVersions.rxJava.rxAndroid}"
+
     // AppCompat
     implementation "androidx.appcompat:appcompat:${libraryVersions.androidX.appCompat}"
     implementation "com.google.android.material:material:${libraryVersions.androidX.materialComponents}"
