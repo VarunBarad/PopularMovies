@@ -28,11 +28,12 @@ import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.toMovieDetailsDb
+import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
+import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
+import com.varunbarad.popularmovies.external_services.movie_db_api.getImageUrl
 import com.varunbarad.popularmovies.model.data.MovieDetails
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
-import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
-import com.varunbarad.popularmovies.util.MovieDbApi.getImageUrl
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo
 import io.reactivex.Completable
@@ -163,11 +164,11 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
 
     private fun fetchMovieDetails(movieId: Long) {
         val retrofit = Retrofit.Builder()
-            .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
+        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
         movieDbApiRetroFitHelper
             .getMovieDetails(movieId)
@@ -183,12 +184,22 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
 
         this.handler.postDelayed({
             Picasso.with(this.dataBinding.imageViewMovieDetailsPoster.context)
-                .load(getImageUrl(movieStub.posterPath, this.dataBinding.imageViewMovieDetailsPoster.width))
+                .load(
+                    getImageUrl(
+                        movieStub.posterPath,
+                        this.dataBinding.imageViewMovieDetailsPoster.width
+                    )
+                )
                 .error(R.drawable.ic_cloud_off)
                 .into(this.dataBinding.imageViewMovieDetailsPoster)
 
             Picasso.with(this.dataBinding.imageViewMovieDetailsBackdrop.context)
-                .load(getImageUrl(movieStub.backdropPath, this.dataBinding.imageViewMovieDetailsBackdrop.width))
+                .load(
+                    getImageUrl(
+                        movieStub.backdropPath,
+                        this.dataBinding.imageViewMovieDetailsBackdrop.width
+                    )
+                )
                 .error(R.drawable.ic_cloud_off)
                 .into(this.dataBinding.imageViewMovieDetailsBackdrop)
         }, 17)

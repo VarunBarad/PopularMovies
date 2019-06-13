@@ -1,5 +1,6 @@
 @file:JvmName("MovieDbApiImageHelper")
-package com.varunbarad.popularmovies.util.MovieDbApi
+
+package com.varunbarad.popularmovies.external_services.movie_db_api
 
 /**
  * Creator: vbarad

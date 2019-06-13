@@ -20,10 +20,11 @@ import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
+import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
+import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.model.data.MovieList
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
-import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
 import com.varunbarad.popularmovies.util.isConnectedToInternet
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -204,11 +205,11 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         this.showProgress()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
+        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
         movieDbApiRetroFitHelper
             .getPopularMovies(1)
@@ -233,11 +234,11 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         this.showProgress()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(MovieDbApiRetroFitHelper.baseUrl)
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiRetroFitHelper::class.java)
+        val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
         movieDbApiRetroFitHelper
             .getHighestRatedMovies(1)

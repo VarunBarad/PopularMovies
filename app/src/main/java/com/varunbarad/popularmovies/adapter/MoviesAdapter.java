@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
+import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiImageHelper;
 import com.varunbarad.popularmovies.model.data.MovieStub;
-import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiImageHelper;
 
 import java.util.List;
 
