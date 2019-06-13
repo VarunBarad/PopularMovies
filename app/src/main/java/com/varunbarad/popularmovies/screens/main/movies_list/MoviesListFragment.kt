@@ -2,6 +2,7 @@ package com.varunbarad.popularmovies.screens.main.movies_list
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,16 +15,21 @@ import com.squareup.moshi.Types
 import com.varunbarad.popularmovies.R
 import com.varunbarad.popularmovies.adapter.MoviesAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding
+import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
+import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.model.data.MovieList
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
-import com.varunbarad.popularmovies.util.data.MovieDbHelper
 import com.varunbarad.popularmovies.util.isConnectedToInternet
-import com.varunbarad.popularmovies.util.readOneMovie
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,8 +45,11 @@ private const val ACCEPTABLE_DELAY = 10 * 60 * 1000
 
 class MoviesListFragment : Fragment(), ListItemClickListener {
     private var fragmentInteractionListener: OnFragmentInteractionListener? = null
+    private val disposable: CompositeDisposable = CompositeDisposable()
 
-    private lateinit var databaseHelper: MovieDbHelper
+    private val moviesDao: MovieDetailsDao by lazy {
+        LocalDatabaseModule(this.requireActivity().application).provideMoviesDao()
+    }
 
     private lateinit var dataBinding: FragmentMoviesListBinding
     private var moviesAdapter: MoviesAdapter? = null
@@ -73,8 +82,6 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         this.sortCriteriaEntries = this.context?.resources?.getStringArray(R.array.entries_sortCriteria) ?: emptyArray()
 
         this.dataBinding = FragmentMoviesListBinding.inflate(inflater, container, false)
-
-        this.databaseHelper = MovieDbHelper(this.requireContext())
 
         this.dataBinding.spinnerSortCriteria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -160,19 +167,28 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
             activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
-        if (this.dataBinding.spinnerSortCriteria.selectedItem.toString().equals("my favories", true)) {
-            val cursor = this.databaseHelper.queryFavoriteMovies()
-            if (cursor != null) {
-                if (cursor.count > 1) {
-                    this.showNoFavorites()
-                }
-                cursor.close()
-            }
+        if (this.dataBinding.spinnerSortCriteria.selectedItem.toString().equals("my favorites", true)) {
+            this.disposable.add(
+                Single.fromCallable { this.moviesDao.getFavoriteMovies() }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(
+                        onError = {
+                            Log.w(this.requireContext().packageName, it.message)
+                            this.showNoFavorites()
+                        },
+                        onSuccess = {
+                            if (it.isEmpty()) {
+                                this.showNoFavorites()
+                            }
+                        }
+                    )
+            )
         }
     }
 
     override fun onDestroy() {
-        this.databaseHelper.close()
+        this.disposable.clear()
         super.onDestroy()
     }
 
@@ -243,25 +259,24 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     }
 
     private fun fetchFavoriteMovies() {
-        val cursor = this.databaseHelper.queryFavoriteMovies()
-        if (cursor != null) {
-            if (cursor.count > 0) {
-                val favoriteMovies = mutableListOf<MovieStub>()
-
-                cursor.moveToFirst()
-                do {
-                    favoriteMovies.add(cursor.readOneMovie().toMovieStub())
-                } while (cursor.moveToNext())
-
-                this.showMovies(favoriteMovies)
-            } else {
-                this.showNoFavorites()
-            }
-
-            cursor.close()
-        } else {
-            this.showNoFavorites()
-        }
+        this.disposable.add(
+            Single.fromCallable { this.moviesDao.getFavoriteMovies() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onError = {
+                        Log.w(this.requireContext().packageName, it.message)
+                        this.showNoFavorites()
+                    },
+                    onSuccess = { movies ->
+                        if (movies.isNotEmpty()) {
+                            this.showMovies(movies.map { it.toMovieDetails().toMovieStub() })
+                        } else {
+                            this.showNoFavorites()
+                        }
+                    }
+                )
+        )
     }
 
     private fun showNetworkError() {

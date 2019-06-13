@@ -3,22 +3,32 @@ package com.varunbarad.popularmovies.screens.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.varunbarad.popularmovies.R
 import com.varunbarad.popularmovies.databinding.ActivityMainBinding
+import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
+import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.movie_details.MovieDetailsFragment
 import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
-import com.varunbarad.popularmovies.util.data.MovieDbHelper
-import com.varunbarad.popularmovies.util.readOneMovie
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
-  private val databaseHelper: MovieDbHelper = MovieDbHelper(this)
+    private val disposable: CompositeDisposable = CompositeDisposable()
+
+    private val moviesDao: MovieDetailsDao by lazy {
+        LocalDatabaseModule(this.application).provideMoviesDao()
+    }
 
   private lateinit var dataBinding: ActivityMainBinding
 
@@ -50,16 +60,19 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
           this.onBackPressed()
         }
 
-        val cursor = this.databaseHelper.queryMovieDetails(movieId)
-
-        if (cursor != null) {
-          if (cursor.count > 0) {
-            cursor.moveToFirst()
-            this.showDetails(cursor.readOneMovie().toMovieStub())
-          }
-
-          cursor.close()
-        }
+          this.disposable.add(
+              Single.fromCallable { this.moviesDao.getMovieDetails(movieId) }
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribeBy(
+                      onError = { Log.w(this.packageName, it.message) },
+                      onSuccess = {
+                          if (it != null) {
+                              this.showDetails(it.toMovieDetails().toMovieStub())
+                          }
+                      }
+                  )
+          )
       }
     } else {
       val movieDetailsFragment = this.supportFragmentManager.findFragmentById(R.id.fragment_details_container)
@@ -72,15 +85,19 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
             .remove(movieDetailsFragment)
             .commit()
 
-        val cursor = this.databaseHelper.queryMovieDetails(movieId)
-        if (cursor != null) {
-          if (cursor.count > 0) {
-            cursor.moveToFirst()
-            this.showDetails(cursor.readOneMovie().toMovieStub())
-          }
-
-          cursor.close()
-        }
+          this.disposable.add(
+              Single.fromCallable { this.moviesDao.getMovieDetails(movieId) }
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribeBy(
+                      onError = { Log.w(this.packageName, it.message) },
+                      onSuccess = {
+                          if (it != null) {
+                              this.showDetails(it.toMovieDetails().toMovieStub())
+                          }
+                      }
+                  )
+          )
       }
     }
   }
@@ -139,7 +156,7 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
   }
 
   override fun onDestroy() {
-    this.databaseHelper.close()
+      this.disposable.clear()
     super.onDestroy()
   }
 

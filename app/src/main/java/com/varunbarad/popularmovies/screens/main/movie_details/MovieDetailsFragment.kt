@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,18 +23,24 @@ import com.varunbarad.popularmovies.adapter.ReviewAdapter
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter
 import com.varunbarad.popularmovies.adapter.TrailerVideoAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding
+import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
+import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
+import com.varunbarad.popularmovies.external_services.local_database.movie_details.toMovieDetailsDb
 import com.varunbarad.popularmovies.model.data.MovieDetails
 import com.varunbarad.popularmovies.model.data.MovieStub
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.MovieDbApi.MovieDbApiRetroFitHelper
 import com.varunbarad.popularmovies.util.MovieDbApi.getImageUrl
-import com.varunbarad.popularmovies.util.data.MovieContract
-import com.varunbarad.popularmovies.util.data.MovieDbHelper
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo
-import com.varunbarad.popularmovies.util.readOneMovie
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -49,15 +56,18 @@ import java.util.*
 class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
     private var fragmentInteractionListener: OnFragmentInteractionListener? = null
 
-    private lateinit var databaseHelper: MovieDbHelper
-
     private lateinit var dataBinding: FragmentMovieDetailsBinding
     private var progressDialog: ProgressDialog? = null
+
+    private val moviesDao: MovieDetailsDao by lazy {
+        LocalDatabaseModule(this.requireActivity().application).provideMoviesDao()
+    }
 
     private lateinit var movieStub: MovieStub
     private var movieDetails: MovieDetails? = null
     private var isMovieFavorite: Boolean = false
 
+    private val disposable: CompositeDisposable = CompositeDisposable()
     private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,36 +109,36 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         this.dataBinding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
 
-        this.databaseHelper = MovieDbHelper(this.requireContext())
-
-        this.movieStub
         this.fetchMovieDetails(this.movieStub.id)
         this.fillPartialDetails(this.movieStub)
 
-        val cursor = this.databaseHelper.queryMovieDetails(this.movieStub.id)
-        if (cursor != null) {
-            if (cursor.count > 0) {
-                cursor.moveToFirst()
-                val movieDetails = cursor.readOneMovie()
-                this.movieDetails = movieDetails
-                this.isMovieFavorite =
-                    (cursor.getInt(cursor.getColumnIndex(MovieContract.Movie.COLUMN_IS_FAVORITE)) == 1)
-                cursor.moveToNext()
-                this.fillDetails(movieDetails)
-            } else {
-                this.showProgressDialog()
-            }
-
-            cursor.close()
-        } else {
-            this.showProgressDialog()
-        }
+        this.disposable.add(
+            Single.fromCallable {
+                this.moviesDao.getMovieDetails(this.movieStub.id)
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onError = {
+                        Log.w(this.context?.packageName, it.message)
+                        this.showProgressDialog()
+                    },
+                    onSuccess = {
+                        if (it != null) {
+                            this.movieDetails = it.toMovieDetails()
+                            this.isMovieFavorite = it.isFavorite
+                            this.fillDetails(it.toMovieDetails())
+                        } else {
+                            this.showProgressDialog()
+                        }
+                    }
+                )
+        )
 
         return this.dataBinding.root
     }
 
     override fun onDestroyView() {
-        this.databaseHelper.close()
+        this.disposable.clear()
         super.onDestroyView()
     }
 
@@ -293,7 +303,15 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
                 this.fillDetails(movieDetails)
 
                 // Save the movie-details to database
-                this.databaseHelper.insertMovieDetails(movieDetails, this.isMovieFavorite)
+                this.disposable.add(
+                    Completable.fromCallable {
+                        this.moviesDao.insertMovie(movieDetails.toMovieDetailsDb(this.isMovieFavorite))
+                    }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                            onError = { Log.w(this.context?.packageName, it.message) }
+                        )
+                )
             } else {
                 this.onFailure(call, NetworkErrorException("Null response from server"))
             }
@@ -353,7 +371,15 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
 
             val movieDetails = this.movieDetails
             if (movieDetails != null) {
-                this.databaseHelper.updateMovieFavoriteStatus(movieDetails.id, true)
+                this.disposable.add(
+                    Completable.fromCallable {
+                        this.moviesDao.updateFavoriteStatus(movieDetails.toMovieDetailsDb(true))
+                    }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                            onError = { Log.e(this.context?.packageName, it.message) }
+                        )
+                )
 
                 this.fragmentInteractionListener?.onFragmentInteraction(
                     FragmentInteractionEvent.AddToFavoriteEvent(movieDetails.toMovieStub())
@@ -362,12 +388,20 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         } else {
             this.dataBinding.floatingActionButtonMovieDetailsFavorite.setImageResource(R.drawable.ic_favorite_border)
 
-            val movieId = this.movieDetails?.id
-            if (movieId != null) {
-                this.databaseHelper.updateMovieFavoriteStatus(movieId, false)
+            val movieDetails = this.movieDetails
+            if (movieDetails != null) {
+                this.disposable.add(
+                    Completable.fromCallable {
+                        this.moviesDao.updateFavoriteStatus(movieDetails.toMovieDetailsDb(false))
+                    }.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                            onError = { Log.e(this.context?.packageName, it.message) }
+                        )
+                )
 
                 this.fragmentInteractionListener?.onFragmentInteraction(
-                    FragmentInteractionEvent.RemoveFromFavoriteEvent(movieId)
+                    FragmentInteractionEvent.RemoveFromFavoriteEvent(movieDetails.id)
                 )
             }
         }

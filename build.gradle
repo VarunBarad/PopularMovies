@@ -26,7 +26,8 @@ buildscript {
                 androidX      : [
                         appCompat         : '1.0.2',
                         materialComponents: '1.1.0-alpha07',
-                        constraintLayout  : '1.1.3'
+                        constraintLayout  : '1.1.3',
+                        room              : '2.1.0-rc01'
                 ],
                 moshi         : '1.8.0',
                 retrofit      : '2.5.0',

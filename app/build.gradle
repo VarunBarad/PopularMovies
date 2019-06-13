@@ -63,6 +63,11 @@ dependencies {
     // Material Dialog
     implementation "com.afollestad.material-dialogs:core:${libraryVersions.materialDialog}"
 
+    // Room database library
+    implementation "androidx.room:room-runtime:${libraryVersions.androidX.room}"
+    annotationProcessor "androidx.room:room-compiler:${libraryVersions.androidX.room}"
+    kapt "androidx.room:room-compiler:${libraryVersions.androidX.room}"
+
     // JUnit Testing Framework
     testImplementation "junit:junit:${libraryVersions.testing.jUnit}"
 }
