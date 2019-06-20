@@ -3,7 +3,8 @@ package com.varunbarad.popularmovies.external_services.local_database.movie_deta
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.varunbarad.popularmovies.model.data.*
+import com.varunbarad.popularmovies.external_services.local_database.models.*
+import com.varunbarad.popularmovies.model.data.MovieDetails
 
 /**
  * Creator: Varun Barad
@@ -15,7 +16,7 @@ data class MovieDetailsDb(
     @PrimaryKey @ColumnInfo(name = "movie_id") val id: Long,
     @ColumnInfo(name = "adult") val isAdult: Boolean = false,
     @ColumnInfo(name = "backdrop_path") val backdropPath: String = "",
-    @ColumnInfo(name = "genre") val genres: List<Genre> = emptyList(),
+    @ColumnInfo(name = "genre") val genres: List<GenreDb> = emptyList(),
     @ColumnInfo(name = "homepage") val homepage: String = "",
     @ColumnInfo(name = "overview") val overview: String,
     @ColumnInfo(name = "poster_path") val posterPath: String,
@@ -26,11 +27,11 @@ data class MovieDetailsDb(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "vote_average") val averageVote: Double,
     @ColumnInfo(name = "vote_count") val numberOfVotes: Long,
-    @ColumnInfo(name = "videos") val videos: VideoList? = null,
-    @ColumnInfo(name = "images") val images: ImageList? = null,
-    @ColumnInfo(name = "reviews") val reviews: ReviewList? = null,
-    @ColumnInfo(name = "recommended_movies") val recommendations: MovieList? = null,
-    @ColumnInfo(name = "similar_movies") val similarMovies: MovieList? = null,
+    @ColumnInfo(name = "videos") val videos: VideoListDb? = null,
+    @ColumnInfo(name = "images") val images: ImageListDb? = null,
+    @ColumnInfo(name = "reviews") val reviews: ReviewListDb? = null,
+    @ColumnInfo(name = "recommended_movies") val recommendations: MovieListDb? = null,
+    @ColumnInfo(name = "similar_movies") val similarMovies: MovieListDb? = null,
     @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false
 ) {
     fun toMovieDetails(): MovieDetails {
@@ -38,7 +39,7 @@ data class MovieDetailsDb(
             id = this.id,
             isAdult = this.isAdult,
             backdropPath = this.backdropPath,
-            genres = this.genres,
+            genres = this.genres.map { it.toGenre() },
             homepage = this.homepage,
             overview = this.overview,
             posterPath = this.posterPath,
@@ -49,11 +50,11 @@ data class MovieDetailsDb(
             title = this.title,
             averageVote = this.averageVote,
             numberOfVotes = this.numberOfVotes,
-            videos = this.videos,
-            images = this.images,
-            reviews = this.reviews,
-            recommendations = this.recommendations,
-            similarMovies = this.similarMovies
+            videos = this.videos?.toVideoList(),
+            images = this.images?.toImageList(),
+            reviews = this.reviews?.toReviewList(),
+            recommendations = this.recommendations?.toMovieList(),
+            similarMovies = this.similarMovies?.toMovieList()
         )
     }
 }
@@ -63,7 +64,7 @@ fun MovieDetails.toMovieDetailsDb(isFavorite: Boolean): MovieDetailsDb {
         id = this.id,
         isAdult = this.isAdult,
         backdropPath = this.backdropPath,
-        genres = this.genres,
+        genres = this.genres.map { it.toGenreDb() },
         homepage = this.homepage,
         overview = this.overview,
         posterPath = this.posterPath,
@@ -74,11 +75,11 @@ fun MovieDetails.toMovieDetailsDb(isFavorite: Boolean): MovieDetailsDb {
         title = this.title,
         averageVote = this.averageVote,
         numberOfVotes = this.numberOfVotes,
-        videos = this.videos,
-        images = this.images,
-        reviews = this.reviews,
-        recommendations = this.recommendations,
-        similarMovies = this.similarMovies,
+        videos = this.videos?.toVideoListDb(),
+        images = this.images?.toImageListDb(),
+        reviews = this.reviews?.toReviewListDb(),
+        recommendations = this.recommendations?.toMovieListDb(),
+        similarMovies = this.similarMovies?.toMovieListDb(),
         isFavorite = isFavorite
     )
 }

@@ -3,7 +3,7 @@ package com.varunbarad.popularmovies.external_services.local_database
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.varunbarad.popularmovies.model.data.*
+import com.varunbarad.popularmovies.external_services.local_database.models.*
 
 /**
  * Creator: Varun Barad
@@ -16,24 +16,29 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun fromGenresList(value: List<Genre>): String {
-            return moshi.adapter<List<Genre>>(Types.newParameterizedType(List::class.java, Genre::class.java))
+        fun fromGenresList(value: List<GenreDb>): String {
+            return moshi.adapter<List<GenreDb>>(Types.newParameterizedType(List::class.java, GenreDb::class.java))
                 .toJson(value)
         }
 
         @JvmStatic
         @TypeConverter
-        fun toGenresList(value: String): List<Genre> {
-            return moshi.adapter<List<Genre>>(Types.newParameterizedType(List::class.java, Genre::class.java)).fromJson(
+        fun toGenresList(value: String): List<GenreDb> {
+            return moshi.adapter<List<GenreDb>>(
+                Types.newParameterizedType(
+                    List::class.java,
+                    GenreDb::class.java
+                )
+            ).fromJson(
                 value
             ) ?: emptyList()
         }
 
         @JvmStatic
         @TypeConverter
-        fun fromVideoList(value: VideoList?): String? {
+        fun fromVideoList(value: VideoListDb?): String? {
             return if (value != null) {
-                moshi.adapter(VideoList::class.java).toJson(value)
+                moshi.adapter(VideoListDb::class.java).toJson(value)
             } else {
                 null
             }
@@ -41,9 +46,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun toVideoList(value: String?): VideoList? {
+        fun toVideoList(value: String?): VideoListDb? {
             return if (value != null) {
-                moshi.adapter(VideoList::class.java).fromJson(value)
+                moshi.adapter(VideoListDb::class.java).fromJson(value)
             } else {
                 null
             }
@@ -51,9 +56,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun fromImageList(value: ImageList?): String? {
+        fun fromImageList(value: ImageListDb?): String? {
             return if (value != null) {
-                moshi.adapter(ImageList::class.java).toJson(value)
+                moshi.adapter(ImageListDb::class.java).toJson(value)
             } else {
                 null
             }
@@ -61,9 +66,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun toImageList(value: String?): ImageList? {
+        fun toImageList(value: String?): ImageListDb? {
             return if (value != null) {
-                moshi.adapter(ImageList::class.java).fromJson(value)
+                moshi.adapter(ImageListDb::class.java).fromJson(value)
             } else {
                 null
             }
@@ -71,9 +76,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun fromReviewList(value: ReviewList?): String? {
+        fun fromReviewList(value: ReviewListDb?): String? {
             return if (value != null) {
-                moshi.adapter(ReviewList::class.java).toJson(value)
+                moshi.adapter(ReviewListDb::class.java).toJson(value)
             } else {
                 null
             }
@@ -81,9 +86,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun toReviewList(value: String?): ReviewList? {
+        fun toReviewList(value: String?): ReviewListDb? {
             return if (value != null) {
-                moshi.adapter(ReviewList::class.java).fromJson(value)
+                moshi.adapter(ReviewListDb::class.java).fromJson(value)
             } else {
                 null
             }
@@ -91,9 +96,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun fromMovieList(value: MovieList?): String? {
+        fun fromMovieList(value: MovieListDb?): String? {
             return if (value != null) {
-                moshi.adapter(MovieList::class.java).toJson(value)
+                moshi.adapter(MovieListDb::class.java).toJson(value)
             } else {
                 null
             }
@@ -101,9 +106,9 @@ class RoomTypeConverters {
 
         @JvmStatic
         @TypeConverter
-        fun toMovieList(value: String?): MovieList? {
+        fun toMovieList(value: String?): MovieListDb? {
             return if (value != null) {
-                moshi.adapter(MovieList::class.java).fromJson(value)
+                moshi.adapter(MovieListDb::class.java).fromJson(value)
             } else {
                 null
             }
