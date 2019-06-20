@@ -31,8 +31,10 @@ import com.varunbarad.popularmovies.external_services.local_database.movie_detai
 import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.getImageUrl
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieDetails
 import com.varunbarad.popularmovies.model.data.MovieDetails
 import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.model.data.toMovieDetails
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo
@@ -54,7 +56,7 @@ import java.util.*
  * Date: 2019-06-04
  * Project: PopularMovies
  */
-class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
+class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
     private var fragmentInteractionListener: OnFragmentInteractionListener? = null
 
     private lateinit var dataBinding: FragmentMovieDetailsBinding
@@ -76,8 +78,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
 
         val arguments = this.arguments
         if (arguments != null) {
-            val movieStubJson = arguments.getString(KEY_MOVIE_STUB) ?: "{}"
-            this.movieStub = MovieStub.getInstance(movieStubJson)!!
+            this.movieStub = arguments.getParcelable(KEY_MOVIE_STUB)
         }
     }
 
@@ -305,18 +306,18 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         }
     }
 
-    override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
+    override fun onResponse(call: Call<ApiMovieDetails>, response: Response<ApiMovieDetails>) {
         if (this.isVisible) {
             val movieDetails = response.body()
             if (movieDetails != null) {
-                this.movieDetails = movieDetails
+                this.movieDetails = movieDetails.toMovieDetails()
                 this.dismissProgressDialog()
-                this.fillDetails(movieDetails)
+                this.fillDetails(movieDetails.toMovieDetails())
 
                 // Save the movie-details to database
                 this.disposable.add(
                     Completable.fromCallable {
-                        this.moviesDao.insertMovie(movieDetails.toMovieDetailsDb(this.isMovieFavorite))
+                        this.moviesDao.insertMovie(movieDetails.toMovieDetails().toMovieDetailsDb(this.isMovieFavorite))
                     }.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
@@ -329,7 +330,8 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         }
     }
 
-    override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
+    override fun onFailure(call: Call<ApiMovieDetails>, t: Throwable) {
+        Log.d("PopularMoviesLog", t.message)
         Snackbar.make(this.dataBinding.root, "Network failure", Snackbar.LENGTH_LONG).show()
         this.dismissProgressDialog()
     }
@@ -425,7 +427,7 @@ class MovieDetailsFragment : Fragment(), Callback<MovieDetails> {
         fun newInstance(movieStub: MovieStub): MovieDetailsFragment {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putString(KEY_MOVIE_STUB, movieStub.toString())
+                    putParcelable(KEY_MOVIE_STUB, movieStub)
                 }
             }
         }

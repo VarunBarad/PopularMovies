@@ -1,43 +1,67 @@
 package com.varunbarad.popularmovies.model.data
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
-import java.io.IOException
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieDetails
 
 /**
  * Creator: Varun Barad
  * Date: 2019-06-05
  * Project: PopularMovies
  */
-@JsonClass(generateAdapter = true)
 data class MovieDetails(
-    @Json(name = "adult") val isAdult: Boolean = false,
-    @Json(name = "backdrop_path") val backdropPath: String = "",
-    @Json(name = "genres") val genres: List<Genre> = emptyList(),
-    @Json(name = "homepage") val homepage: String = "",
-    @Json(name = "id") val id: Long,
-    @Json(name = "overview") val overview: String,
-    @Json(name = "poster_path") val posterPath: String,
-    @Json(name = "release_date") val releaseDate: String = "",
-    @Json(name = "runtime") val runtime: Int = 0,
-    @Json(name = "status") val status: String = "",
-    @Json(name = "tagline") val tagLine: String,
-    @Json(name = "title") val title: String,
-    @Json(name = "vote_average") val averageVote: Double,
-    @Json(name = "vote_count") val numberOfVotes: Long,
-    @Json(name = "videos") val videos: VideoList? = null,
-    @Json(name = "images") val images: ImageList? = null,
-    @Json(name = "reviews") val reviews: ReviewList? = null,
-    @Json(name = "recommendations") val recommendations: MovieList? = null,
-    @Json(name = "similar_movies") val similarMovies: MovieList? = null
+    val isAdult: Boolean = false,
+    val backdropPath: String = "",
+    val genres: List<Genre> = emptyList(),
+    val homepage: String = "",
+    val id: Long,
+    val overview: String,
+    val posterPath: String,
+    val releaseDate: String = "",
+    val runtime: Int = 0,
+    val status: String = "",
+    val tagLine: String,
+    val title: String,
+    val averageVote: Double,
+    val numberOfVotes: Long,
+    val videos: VideoList? = null,
+    val images: ImageList? = null,
+    val reviews: ReviewList? = null,
+    val recommendations: MovieList? = null,
+    val similarMovies: MovieList? = null
 ) {
-    @Throws(IOException::class)
     fun toMovieStub(): MovieStub {
-        return Moshi.Builder().build().adapter(MovieStub::class.java).fromJson(this.toString())!!
+        return MovieStub(
+            posterPath = this.posterPath,
+            adult = this.isAdult,
+            overview = this.overview,
+            releaseDate = this.releaseDate,
+            id = this.id,
+            title = this.title,
+            backdropPath = this.backdropPath,
+            voteAverage = this.averageVote
+        )
     }
+}
 
-    override fun toString(): String {
-        return Moshi.Builder().build().adapter(MovieDetails::class.java).toJson(this)
-    }
+fun ApiMovieDetails.toMovieDetails(): MovieDetails {
+    return MovieDetails(
+        isAdult = this.isAdult,
+        backdropPath = this.backdropPath,
+        genres = this.genres.map { it.toGenre() },
+        homepage = this.homepage,
+        id = this.id,
+        overview = this.overview,
+        posterPath = this.posterPath,
+        releaseDate = this.releaseDate,
+        runtime = this.runtime,
+        status = this.status,
+        tagLine = this.tagLine,
+        title = this.title,
+        averageVote = this.averageVote,
+        numberOfVotes = this.numberOfVotes,
+        videos = this.videos?.toVideoList(),
+        images = this.images?.toImageList(),
+        reviews = this.reviews?.toReviewList(),
+        recommendations = this.recommendations?.toMovieList(),
+        similarMovies = this.similarMovies?.toMovieList()
+    )
 }

@@ -22,8 +22,9 @@ import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
-import com.varunbarad.popularmovies.model.data.MovieList
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieList
 import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.model.data.toMovieList
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.isConnectedToInternet
 import io.reactivex.Single
@@ -213,13 +214,13 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         movieDbApiRetroFitHelper
             .getPopularMovies(1)
-            .enqueue(object : Callback<MovieList?> {
-                override fun onFailure(call: Call<MovieList?>, t: Throwable) {
+            .enqueue(object : Callback<ApiMovieList?> {
+                override fun onFailure(call: Call<ApiMovieList?>, t: Throwable) {
                     this@MoviesListFragment.showNetworkError()
                 }
 
-                override fun onResponse(call: Call<MovieList?>, response: Response<MovieList?>) {
-                    val movies = response.body()?.results
+                override fun onResponse(call: Call<ApiMovieList?>, response: Response<ApiMovieList?>) {
+                    val movies = response.body()?.toMovieList()?.results
                     if (movies != null) {
                         this@MoviesListFragment.showMovies(movies)
                         this@MoviesListFragment.storePopularMovies(movies)
@@ -242,13 +243,13 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         movieDbApiRetroFitHelper
             .getHighestRatedMovies(1)
-            .enqueue(object : Callback<MovieList?> {
-                override fun onFailure(call: Call<MovieList?>, t: Throwable) {
+            .enqueue(object : Callback<ApiMovieList?> {
+                override fun onFailure(call: Call<ApiMovieList?>, t: Throwable) {
                     this@MoviesListFragment.showNetworkError()
                 }
 
-                override fun onResponse(call: Call<MovieList?>, response: Response<MovieList?>) {
-                    val movies = response.body()?.results
+                override fun onResponse(call: Call<ApiMovieList?>, response: Response<ApiMovieList?>) {
+                    val movies = response.body()?.toMovieList()?.results
                     if (movies != null) {
                         this@MoviesListFragment.showMovies(movies)
                         this@MoviesListFragment.storeHighestRatedMovies(movies)

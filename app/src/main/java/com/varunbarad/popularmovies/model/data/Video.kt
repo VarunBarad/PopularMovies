@@ -1,24 +1,21 @@
 package com.varunbarad.popularmovies.model.data
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiVideo
 
 /**
  * Creator: Varun Barad
  * Date: 2019-06-05
  * Project: PopularMovies
  */
-@JsonClass(generateAdapter = true)
 data class Video(
-    @Json(name = "id") val id: String,
-    @Json(name = "iso_639_1") val isoLanguageCode: String,
-    @Json(name = "iso_3166_1") val isoCountryCode: String,
-    @Json(name = "key") val key: String,
-    @Json(name = "name") val name: String,
-    @Json(name = "site") val site: String,
-    @Json(name = "size") val size: Int,
-    @Json(name = "type") val type: String
+    val id: String,
+    val isoLanguageCode: String,
+    val isoCountryCode: String,
+    val key: String,
+    val name: String,
+    val site: String,
+    val size: Int,
+    val type: String
 ) {
     fun getVideoUrl(): String? {
         return if (this.site.toLowerCase() == "youtube") {
@@ -27,8 +24,17 @@ data class Video(
             null
         }
     }
+}
 
-    override fun toString(): String {
-        return Moshi.Builder().build().adapter(Video::class.java).toJson(this)
-    }
+fun ApiVideo.toVideo(): Video {
+    return Video(
+        id = this.id,
+        isoLanguageCode = this.isoLanguageCode,
+        isoCountryCode = this.isoCountryCode,
+        key = this.key,
+        name = this.name,
+        site = this.site,
+        size = this.size,
+        type = this.type
+    )
 }

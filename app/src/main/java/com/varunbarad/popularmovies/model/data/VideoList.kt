@@ -1,14 +1,13 @@
 package com.varunbarad.popularmovies.model.data
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiVideoList
 
-@JsonClass(generateAdapter = true)
 data class VideoList(
-    @Json(name = "results") val results: List<Video>
-) {
-    override fun toString(): String {
-        return Moshi.Builder().build().adapter(VideoList::class.java).toJson(this)
-    }
+    val results: List<Video>
+)
+
+fun ApiVideoList.toVideoList(): VideoList {
+    return VideoList(
+        results = this.results.map { it.toVideo() }
+    )
 }

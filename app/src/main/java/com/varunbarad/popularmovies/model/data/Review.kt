@@ -1,8 +1,6 @@
 package com.varunbarad.popularmovies.model.data
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
+import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiReview
 
 /**
  * Creator: Varun Barad
@@ -12,12 +10,11 @@ import com.squareup.moshi.Moshi
 private const val SHORTENED_LENGTH = 200
 private const val ellipsis = "…"
 
-@JsonClass(generateAdapter = true)
 data class Review(
-    @Json(name = "id") val id: String,
-    @Json(name = "author") val author: String,
-    @Json(name = "content") val content: String,
-    @Json(name = "url") val url: String
+    val id: String,
+    val author: String,
+    val content: String,
+    val url: String
 ) {
     fun getShortenedContent(): String {
         return if (this.content.length > SHORTENED_LENGTH) {
@@ -26,8 +23,13 @@ data class Review(
             this.content
         }
     }
+}
 
-    override fun toString(): String {
-        return Moshi.Builder().build().adapter(Review::class.java).toJson(this)
-    }
+fun ApiReview.toReview(): Review {
+    return Review(
+        id = this.id,
+        author = this.author,
+        content = this.content,
+        url = this.url
+    )
 }
