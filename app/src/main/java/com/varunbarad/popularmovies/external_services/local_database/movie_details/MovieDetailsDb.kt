@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.varunbarad.popularmovies.external_services.local_database.models.*
-import com.varunbarad.popularmovies.model.data.MovieDetails
+import com.varunbarad.popularmovies.model.MovieDetails
 
 /**
  * Creator: Varun Barad

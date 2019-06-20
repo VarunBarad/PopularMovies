@@ -7,7 +7,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.varunbarad.popularmovies.R;
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener;
-import com.varunbarad.popularmovies.model.data.Genre;
+import com.varunbarad.popularmovies.model.Genre;
 
 import java.util.List;
 

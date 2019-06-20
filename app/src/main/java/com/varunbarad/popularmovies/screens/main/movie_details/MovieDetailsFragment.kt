@@ -32,9 +32,9 @@ import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.getImageUrl
 import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieDetails
-import com.varunbarad.popularmovies.model.data.MovieDetails
-import com.varunbarad.popularmovies.model.data.MovieStub
-import com.varunbarad.popularmovies.model.data.toMovieDetails
+import com.varunbarad.popularmovies.model.MovieDetails
+import com.varunbarad.popularmovies.model.MovieStub
+import com.varunbarad.popularmovies.model.toMovieDetails
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo

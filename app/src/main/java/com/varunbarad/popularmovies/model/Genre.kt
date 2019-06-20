@@ -1,4 +1,4 @@
-package com.varunbarad.popularmovies.model.data
+package com.varunbarad.popularmovies.model
 
 import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiGenre
 

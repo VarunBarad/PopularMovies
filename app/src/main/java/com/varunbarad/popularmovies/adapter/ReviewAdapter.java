@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.varunbarad.popularmovies.R;
-import com.varunbarad.popularmovies.model.data.Review;
+import com.varunbarad.popularmovies.model.Review;
 import com.varunbarad.popularmovies.util.UrlHelper;
 
 import java.util.List;

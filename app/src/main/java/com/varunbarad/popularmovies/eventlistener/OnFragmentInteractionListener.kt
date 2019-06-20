@@ -1,6 +1,6 @@
 package com.varunbarad.popularmovies.eventlistener
 
-import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.model.MovieStub
 
 /**
  * Creator: Varun Barad

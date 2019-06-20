@@ -3,7 +3,7 @@ package com.varunbarad.popularmovies.external_services.local_database.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.varunbarad.popularmovies.model.data.Review
+import com.varunbarad.popularmovies.model.Review
 
 /**
  * Creator: Varun Barad

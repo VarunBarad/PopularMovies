@@ -23,8 +23,8 @@ import com.varunbarad.popularmovies.external_services.local_database.movie_detai
 import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieList
-import com.varunbarad.popularmovies.model.data.MovieStub
-import com.varunbarad.popularmovies.model.data.toMovieList
+import com.varunbarad.popularmovies.model.MovieStub
+import com.varunbarad.popularmovies.model.toMovieList
 import com.varunbarad.popularmovies.screens.main.MainActivity
 import com.varunbarad.popularmovies.util.isConnectedToInternet
 import io.reactivex.Single

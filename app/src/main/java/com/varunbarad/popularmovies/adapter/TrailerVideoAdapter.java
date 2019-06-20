@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import com.varunbarad.popularmovies.R;
-import com.varunbarad.popularmovies.model.data.Video;
+import com.varunbarad.popularmovies.model.Video;
 import com.varunbarad.popularmovies.util.UrlHelper;
 import com.varunbarad.popularmovies.util.YouTubeApiHelper;
 

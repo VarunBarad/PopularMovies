@@ -14,7 +14,7 @@ import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
-import com.varunbarad.popularmovies.model.data.MovieStub
+import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.screens.main.movie_details.MovieDetailsFragment
 import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
 import io.reactivex.Single

@@ -1,4 +1,4 @@
-package com.varunbarad.popularmovies.model.data
+package com.varunbarad.popularmovies.model
 
 import android.os.Parcel
 import android.os.Parcelable
