@@ -22,7 +22,6 @@ import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
-import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieList
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieList
 import com.varunbarad.popularmovies.screens.main.MainActivity
@@ -32,9 +31,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * Creator: Varun Barad
@@ -207,23 +203,23 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
-        movieDbApiRetroFitHelper
-            .getPopularMovies(1)
-            .enqueue(object : Callback<ApiMovieList?> {
-                override fun onFailure(call: Call<ApiMovieList?>, t: Throwable) {
-                    this@MoviesListFragment.showNetworkError()
-                }
-
-                override fun onResponse(call: Call<ApiMovieList?>, response: Response<ApiMovieList?>) {
-                    val movies = response.body()?.toMovieList()?.results
-                    if (movies != null) {
-                        this@MoviesListFragment.showMovies(movies)
-                        this@MoviesListFragment.storePopularMovies(movies)
-                    } else {
-                        this@MoviesListFragment.showNetworkError()
+        this.disposable.add(
+            movieDbApiRetroFitHelper.getPopularMovies(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onError = { this.showNetworkError() },
+                    onSuccess = {
+                        val movies = it?.toMovieList()?.results
+                        if (movies != null) {
+                            this.showMovies(movies)
+                            this.storePopularMovies(movies)
+                        } else {
+                            this.showNetworkError()
+                        }
                     }
-                }
-            })
+                )
+        )
     }
 
     private fun fetchHighestRatedMovies() {
@@ -233,23 +229,23 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
-        movieDbApiRetroFitHelper
-            .getHighestRatedMovies(1)
-            .enqueue(object : Callback<ApiMovieList?> {
-                override fun onFailure(call: Call<ApiMovieList?>, t: Throwable) {
-                    this@MoviesListFragment.showNetworkError()
-                }
-
-                override fun onResponse(call: Call<ApiMovieList?>, response: Response<ApiMovieList?>) {
-                    val movies = response.body()?.toMovieList()?.results
-                    if (movies != null) {
-                        this@MoviesListFragment.showMovies(movies)
-                        this@MoviesListFragment.storeHighestRatedMovies(movies)
-                    } else {
-                        this@MoviesListFragment.showNetworkError()
+        this.disposable.add(
+            movieDbApiRetroFitHelper.getHighestRatedMovies(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onError = { this.showNetworkError() },
+                    onSuccess = {
+                        val movies = it?.toMovieList()?.results
+                        if (movies != null) {
+                            this.showMovies(movies)
+                            this.storeHighestRatedMovies(movies)
+                        } else {
+                            this.showNetworkError()
+                        }
                     }
-                }
-            })
+                )
+        )
     }
 
     private fun fetchFavoriteMovies() {

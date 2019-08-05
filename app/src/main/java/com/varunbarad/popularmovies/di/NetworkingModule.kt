@@ -5,6 +5,7 @@ import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
 
@@ -27,6 +28,7 @@ object NetworkingModule {
             this.retrofitInstance = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .client(this.provideOkHttpClient(context))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(MoshiConverterFactory.create())
                 .build()
         }

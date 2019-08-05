@@ -1,6 +1,5 @@
 package com.varunbarad.popularmovies.screens.main.movie_details
 
-import android.accounts.NetworkErrorException
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
@@ -31,7 +30,6 @@ import com.varunbarad.popularmovies.external_services.local_database.movie_detai
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.toMovieDetailsDb
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.getImageUrl
-import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieDetails
 import com.varunbarad.popularmovies.model.MovieDetails
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieDetails
@@ -44,9 +42,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 /**
@@ -54,7 +49,7 @@ import java.util.*
  * Date: 2019-06-04
  * Project: PopularMovies
  */
-class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
+class MovieDetailsFragment : Fragment() {
     private var fragmentInteractionListener: OnFragmentInteractionListener? = null
 
     private lateinit var dataBinding: FragmentMovieDetailsBinding
@@ -166,9 +161,43 @@ class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
-        movieDbApiRetroFitHelper
-            .getMovieDetails(movieId)
-            .enqueue(this)
+        this.disposable.add(
+            movieDbApiRetroFitHelper.getMovieDetails(movieId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onError = {
+                        Log.d("PopularMoviesLog", it.message)
+                        Snackbar.make(this.dataBinding.root, "Network failure", Snackbar.LENGTH_LONG).show()
+                        this.dismissProgressDialog()
+                    },
+                    onSuccess = {
+                        if (this.isVisible) {
+                            if (it != null) {
+                                val movieDetails = it.toMovieDetails()
+                                this.movieDetails = movieDetails
+                                this.dismissProgressDialog()
+                                this.fillDetails(movieDetails)
+
+                                // Save the movie-details to database
+                                this.disposable.add(
+                                    Completable.fromCallable {
+                                        this.moviesDao.insertMovie(movieDetails.toMovieDetailsDb(this.isMovieFavorite))
+                                    }.subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribeBy(
+                                            onError = { Log.w(this.context?.packageName, it.message) }
+                                        )
+                                )
+                            } else {
+                                Log.d("PopularMoviesLog", "Null response from server")
+                                Snackbar.make(this.dataBinding.root, "Network failure", Snackbar.LENGTH_LONG).show()
+                                this.dismissProgressDialog()
+                            }
+                        }
+                    }
+                )
+        )
     }
 
     fun getMovieId(): Long {
@@ -299,36 +328,6 @@ class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
                 FragmentInteractionEvent.OpenMovieDetailsEvent(movie.recommendations?.results?.get(position)!!)
             )
         }
-    }
-
-    override fun onResponse(call: Call<ApiMovieDetails>, response: Response<ApiMovieDetails>) {
-        if (this.isVisible) {
-            val movieDetails = response.body()
-            if (movieDetails != null) {
-                this.movieDetails = movieDetails.toMovieDetails()
-                this.dismissProgressDialog()
-                this.fillDetails(movieDetails.toMovieDetails())
-
-                // Save the movie-details to database
-                this.disposable.add(
-                    Completable.fromCallable {
-                        this.moviesDao.insertMovie(movieDetails.toMovieDetails().toMovieDetailsDb(this.isMovieFavorite))
-                    }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(
-                            onError = { Log.w(this.context?.packageName, it.message) }
-                        )
-                )
-            } else {
-                this.onFailure(call, NetworkErrorException("Null response from server"))
-            }
-        }
-    }
-
-    override fun onFailure(call: Call<ApiMovieDetails>, t: Throwable) {
-        Log.d("PopularMoviesLog", t.message)
-        Snackbar.make(this.dataBinding.root, "Network failure", Snackbar.LENGTH_LONG).show()
-        this.dismissProgressDialog()
     }
 
     private fun getVideoUrl(movie: MovieDetails): String? {
