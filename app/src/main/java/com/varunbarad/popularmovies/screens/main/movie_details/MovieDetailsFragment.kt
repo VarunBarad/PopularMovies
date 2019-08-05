@@ -23,12 +23,12 @@ import com.varunbarad.popularmovies.adapter.ReviewAdapter
 import com.varunbarad.popularmovies.adapter.TitledMoviesAdapter
 import com.varunbarad.popularmovies.adapter.TrailerVideoAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding
+import com.varunbarad.popularmovies.di.NetworkingModule
 import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.toMovieDetailsDb
-import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.getImageUrl
 import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieDetails
@@ -47,8 +47,6 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.*
 
 /**
@@ -78,7 +76,7 @@ class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
 
         val arguments = this.arguments
         if (arguments != null) {
-            this.movieStub = arguments.getParcelable(KEY_MOVIE_STUB)
+            this.movieStub = arguments.getParcelable(KEY_MOVIE_STUB)!!
         }
     }
 
@@ -164,10 +162,7 @@ class MovieDetailsFragment : Fragment(), Callback<ApiMovieDetails> {
     }
 
     private fun fetchMovieDetails(movieId: Long) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
+        val retrofit = NetworkingModule.provideRetrofitInstance(this.requireContext())
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 

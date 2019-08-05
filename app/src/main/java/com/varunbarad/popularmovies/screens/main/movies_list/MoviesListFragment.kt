@@ -15,12 +15,12 @@ import com.squareup.moshi.Types
 import com.varunbarad.popularmovies.R
 import com.varunbarad.popularmovies.adapter.MoviesAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding
+import com.varunbarad.popularmovies.di.NetworkingModule
 import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
 import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
-import com.varunbarad.popularmovies.external_services.movie_db_api.Constants
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.external_services.movie_db_api.models.ApiMovieList
 import com.varunbarad.popularmovies.model.MovieStub
@@ -35,8 +35,6 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * Creator: Varun Barad
@@ -205,10 +203,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     private fun fetchPopularMovies() {
         this.showProgress()
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
+        val retrofit = NetworkingModule.provideRetrofitInstance(this.requireContext())
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
@@ -234,10 +229,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     private fun fetchHighestRatedMovies() {
         this.showProgress()
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
-            .build()
+        val retrofit = NetworkingModule.provideRetrofitInstance(this.requireContext())
 
         val movieDbApiRetroFitHelper = retrofit.create(MovieDbApiService::class.java)
 
