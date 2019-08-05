@@ -17,11 +17,10 @@ import com.varunbarad.popularmovies.external_services.local_database.movie_detai
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.screens.main.movie_details.MovieDetailsFragment
 import com.varunbarad.popularmovies.screens.main.movies_list.MoviesListFragment
+import com.varunbarad.popularmovies.util.PopSchedulers
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
     private val disposable: CompositeDisposable = CompositeDisposable()
@@ -62,8 +61,8 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
 
           this.disposable.add(
               Single.fromCallable { this.moviesDao.getMovieDetails(movieId) }
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribeOn(PopSchedulers.io())
+                  .observeOn(PopSchedulers.main())
                   .subscribeBy(
                       onError = { Log.w(this.packageName, it.message) },
                       onSuccess = {
@@ -87,8 +86,8 @@ class MainActivity : AppCompatActivity(), OnFragmentInteractionListener {
 
           this.disposable.add(
               Single.fromCallable { this.moviesDao.getMovieDetails(movieId) }
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribeOn(PopSchedulers.io())
+                  .observeOn(PopSchedulers.main())
                   .subscribeBy(
                       onError = { Log.w(this.packageName, it.message) },
                       onSuccess = {

@@ -34,14 +34,13 @@ import com.varunbarad.popularmovies.model.MovieDetails
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieDetails
 import com.varunbarad.popularmovies.screens.main.MainActivity
+import com.varunbarad.popularmovies.util.PopSchedulers
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 /**
@@ -110,8 +109,8 @@ class MovieDetailsFragment : Fragment() {
         this.disposable.add(
             Single.fromCallable {
                 this.moviesDao.getMovieDetails(this.movieStub.id)
-            }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            }.subscribeOn(PopSchedulers.io())
+                .observeOn(PopSchedulers.main())
                 .subscribeBy(
                     onError = {
                         Log.w(this.context?.packageName, it.message)
@@ -163,8 +162,8 @@ class MovieDetailsFragment : Fragment() {
 
         this.disposable.add(
             movieDbApiRetroFitHelper.getMovieDetails(movieId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(PopSchedulers.io())
+                .observeOn(PopSchedulers.main())
                 .subscribeBy(
                     onError = {
                         Log.d("PopularMoviesLog", it.message)
@@ -183,8 +182,8 @@ class MovieDetailsFragment : Fragment() {
                                 this.disposable.add(
                                     Completable.fromCallable {
                                         this.moviesDao.insertMovie(movieDetails.toMovieDetailsDb(this.isMovieFavorite))
-                                    }.subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
+                                    }.subscribeOn(PopSchedulers.io())
+                                        .observeOn(PopSchedulers.main())
                                         .subscribeBy(
                                             onError = { Log.w(this.context?.packageName, it.message) }
                                         )
@@ -381,8 +380,8 @@ class MovieDetailsFragment : Fragment() {
                 this.disposable.add(
                     Completable.fromCallable {
                         this.moviesDao.updateFavoriteStatus(movieDetails.toMovieDetailsDb(true))
-                    }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                    }.subscribeOn(PopSchedulers.io())
+                        .observeOn(PopSchedulers.main())
                         .subscribeBy(
                             onError = { Log.e(this.context?.packageName, it.message) }
                         )
@@ -400,8 +399,8 @@ class MovieDetailsFragment : Fragment() {
                 this.disposable.add(
                     Completable.fromCallable {
                         this.moviesDao.updateFavoriteStatus(movieDetails.toMovieDetailsDb(false))
-                    }.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                    }.subscribeOn(PopSchedulers.io())
+                        .observeOn(PopSchedulers.main())
                         .subscribeBy(
                             onError = { Log.e(this.context?.packageName, it.message) }
                         )

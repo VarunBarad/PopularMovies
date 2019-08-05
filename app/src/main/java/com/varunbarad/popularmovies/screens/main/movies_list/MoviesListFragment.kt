@@ -25,12 +25,11 @@ import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiSer
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieList
 import com.varunbarad.popularmovies.screens.main.MainActivity
+import com.varunbarad.popularmovies.util.PopSchedulers
 import com.varunbarad.popularmovies.util.isConnectedToInternet
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 
 /**
  * Creator: Varun Barad
@@ -166,8 +165,8 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         if (this.dataBinding.spinnerSortCriteria.selectedItem.toString().equals("my favorites", true)) {
             this.disposable.add(
                 Single.fromCallable { this.moviesDao.getFavoriteMovies() }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(PopSchedulers.io())
+                    .observeOn(PopSchedulers.main())
                     .subscribeBy(
                         onError = {
                             Log.w(this.requireContext().packageName, it.message)
@@ -205,8 +204,8 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         this.disposable.add(
             movieDbApiRetroFitHelper.getPopularMovies(1)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(PopSchedulers.io())
+                .observeOn(PopSchedulers.main())
                 .subscribeBy(
                     onError = { this.showNetworkError() },
                     onSuccess = {
@@ -231,8 +230,8 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
 
         this.disposable.add(
             movieDbApiRetroFitHelper.getHighestRatedMovies(1)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(PopSchedulers.io())
+                .observeOn(PopSchedulers.main())
                 .subscribeBy(
                     onError = { this.showNetworkError() },
                     onSuccess = {
@@ -251,8 +250,8 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     private fun fetchFavoriteMovies() {
         this.disposable.add(
             Single.fromCallable { this.moviesDao.getFavoriteMovies() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(PopSchedulers.io())
+                .observeOn(PopSchedulers.main())
                 .subscribeBy(
                     onError = {
                         Log.w(this.requireContext().packageName, it.message)
