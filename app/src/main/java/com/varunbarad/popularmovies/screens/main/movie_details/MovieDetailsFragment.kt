@@ -306,12 +306,13 @@ class MovieDetailsFragment : Fragment() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.adapter =
-            TitledMoviesAdapter(movie.similarMovies?.results) { position ->
-                this.fragmentInteractionListener?.onFragmentInteraction(
-                    FragmentInteractionEvent.OpenMovieDetailsEvent(movie.similarMovies?.results?.get(position)!!)
-                )
-            }
+        this.dataBinding.recyclerViewMovieDetailsSimilarMovies.adapter = TitledMoviesAdapter(
+            movie.similarMovies?.results
+        ) { position ->
+            this.fragmentInteractionListener?.onFragmentInteraction(
+                FragmentInteractionEvent.OpenMovieDetailsEvent(movie.similarMovies?.results?.get(position)!!)
+            )
+        }
 
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.setHasFixedSize(true)
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.isNestedScrollingEnabled = false
