@@ -1,7 +1,6 @@
 package com.varunbarad.popularmovies.screens.main.movie_details
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -25,7 +25,6 @@ import com.varunbarad.popularmovies.databinding.FragmentMovieDetailsBinding
 import com.varunbarad.popularmovies.di.NetworkingModule
 import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
-import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.toMovieDetailsDb
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
@@ -34,6 +33,7 @@ import com.varunbarad.popularmovies.model.MovieDetails
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieDetails
 import com.varunbarad.popularmovies.screens.main.MainActivity
+import com.varunbarad.popularmovies.screens.main.MainActivityViewModel
 import com.varunbarad.popularmovies.util.PopSchedulers
 import com.varunbarad.popularmovies.util.openUrlInBrowser
 import com.varunbarad.popularmovies.util.openYouTubeVideo
@@ -41,6 +41,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.Subject
 import java.util.*
 
 /**
@@ -49,7 +50,7 @@ import java.util.*
  * Project: PopularMovies
  */
 class MovieDetailsFragment : Fragment() {
-    private var fragmentInteractionListener: OnFragmentInteractionListener? = null
+    private lateinit var fragmentInteractionEmitter: Subject<FragmentInteractionEvent>
 
     private lateinit var dataBinding: FragmentMovieDetailsBinding
     private var progressDialog: ProgressDialog? = null
@@ -74,16 +75,6 @@ class MovieDetailsFragment : Fragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is OnFragmentInteractionListener) {
-            this.fragmentInteractionListener = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
     override fun onResume() {
         super.onResume()
 
@@ -95,13 +86,13 @@ class MovieDetailsFragment : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        this.fragmentInteractionListener = null
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         this.dataBinding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
+        if (!this::fragmentInteractionEmitter.isInitialized) {
+            this.fragmentInteractionEmitter =
+                ViewModelProviders.of(this.requireActivity()).get(MainActivityViewModel::class.java)
+                    .fragmentInteractionEvent
+        }
 
         this.fetchMovieDetails(this.movieStub.id)
         this.fillPartialDetails(this.movieStub)
@@ -309,7 +300,7 @@ class MovieDetailsFragment : Fragment() {
         this.dataBinding.recyclerViewMovieDetailsSimilarMovies.adapter = TitledMoviesAdapter(
             movie.similarMovies?.results
         ) { position ->
-            this.fragmentInteractionListener?.onFragmentInteraction(
+            this.fragmentInteractionEmitter.onNext(
                 FragmentInteractionEvent.OpenMovieDetailsEvent(movie.similarMovies?.results?.get(position)!!)
             )
         }
@@ -324,7 +315,7 @@ class MovieDetailsFragment : Fragment() {
         this.dataBinding.recyclerViewMovieDetailsRecommendedMovies.adapter = TitledMoviesAdapter(
             movie.recommendations?.results
         ) { position ->
-            this.fragmentInteractionListener?.onFragmentInteraction(
+            this.fragmentInteractionEmitter.onNext(
                 FragmentInteractionEvent.OpenMovieDetailsEvent(movie.recommendations?.results?.get(position)!!)
             )
         }
@@ -388,7 +379,7 @@ class MovieDetailsFragment : Fragment() {
                         )
                 )
 
-                this.fragmentInteractionListener?.onFragmentInteraction(
+                this.fragmentInteractionEmitter.onNext(
                     FragmentInteractionEvent.AddToFavoriteEvent(movieDetails.toMovieStub())
                 )
             }
@@ -407,7 +398,7 @@ class MovieDetailsFragment : Fragment() {
                         )
                 )
 
-                this.fragmentInteractionListener?.onFragmentInteraction(
+                this.fragmentInteractionEmitter.onNext(
                     FragmentInteractionEvent.RemoveFromFavoriteEvent(movieDetails.id)
                 )
             }

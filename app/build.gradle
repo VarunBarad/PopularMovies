@@ -69,6 +69,9 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:${libraryVersions.androidX.room}"
     kapt "androidx.room:room-compiler:${libraryVersions.androidX.room}"
 
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-extensions:${libraryVersions.androidX.lifecycle}"
+
     // JUnit Testing Framework
     testImplementation "junit:junit:${libraryVersions.testing.jUnit}"
 }

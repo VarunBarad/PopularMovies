@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.moshi.Moshi
@@ -19,17 +20,18 @@ import com.varunbarad.popularmovies.di.NetworkingModule
 import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
 import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
-import com.varunbarad.popularmovies.eventlistener.OnFragmentInteractionListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.model.MovieStub
 import com.varunbarad.popularmovies.model.toMovieList
 import com.varunbarad.popularmovies.screens.main.MainActivity
+import com.varunbarad.popularmovies.screens.main.MainActivityViewModel
 import com.varunbarad.popularmovies.util.PopSchedulers
 import com.varunbarad.popularmovies.util.isConnectedToInternet
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.Subject
 
 /**
  * Creator: Varun Barad
@@ -39,7 +41,7 @@ import io.reactivex.rxkotlin.subscribeBy
 private const val ACCEPTABLE_DELAY = 10 * 60 * 1000
 
 class MoviesListFragment : Fragment(), ListItemClickListener {
-    private var fragmentInteractionListener: OnFragmentInteractionListener? = null
+    private lateinit var fragmentInteractionEmitter: Subject<FragmentInteractionEvent>
     private val disposable: CompositeDisposable = CompositeDisposable()
 
     private val moviesDao: MovieDetailsDao by lazy {
@@ -59,22 +61,14 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            this.fragmentInteractionListener = context
-        } else {
-            throw RuntimeException("$context must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        this.fragmentInteractionListener = null
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         this.sortCriteriaEntries = this.context?.resources?.getStringArray(R.array.entries_sortCriteria) ?: emptyArray()
+
+        if (!this::fragmentInteractionEmitter.isInitialized) {
+            this.fragmentInteractionEmitter =
+                ViewModelProviders.of(this.requireActivity()).get(MainActivityViewModel::class.java)
+                    .fragmentInteractionEvent
+        }
 
         this.dataBinding = FragmentMoviesListBinding.inflate(inflater, container, false)
 
@@ -190,8 +184,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     override fun onItemClick(position: Int) {
         val movie = this.moviesAdapter?.movies?.get(position)
         if (movie != null) {
-            this.fragmentInteractionListener
-                ?.onFragmentInteraction(FragmentInteractionEvent.OpenMovieDetailsEvent(movie))
+            this.fragmentInteractionEmitter.onNext(FragmentInteractionEvent.OpenMovieDetailsEvent(movie))
         }
     }
 

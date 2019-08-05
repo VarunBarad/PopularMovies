@@ -7,10 +7,6 @@ import com.varunbarad.popularmovies.model.MovieStub
  * Date: 2019-06-04
  * Project: PopularMovies
  */
-interface OnFragmentInteractionListener {
-    fun onFragmentInteraction(event: FragmentInteractionEvent)
-}
-
 sealed class FragmentInteractionEvent {
     class OpenMovieDetailsEvent(val movie: MovieStub): FragmentInteractionEvent()
     class AddToFavoriteEvent(val movie: MovieStub): FragmentInteractionEvent()
