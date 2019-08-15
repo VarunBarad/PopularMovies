@@ -14,12 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.varunbarad.popularmovies.R
-import com.varunbarad.popularmovies.adapter.MoviesAdapter
 import com.varunbarad.popularmovies.databinding.FragmentMoviesListBinding
 import com.varunbarad.popularmovies.di.NetworkingModule
 import com.varunbarad.popularmovies.di.external_services.LocalDatabaseModule
 import com.varunbarad.popularmovies.eventlistener.FragmentInteractionEvent
-import com.varunbarad.popularmovies.eventlistener.ListItemClickListener
 import com.varunbarad.popularmovies.external_services.local_database.movie_details.MovieDetailsDao
 import com.varunbarad.popularmovies.external_services.movie_db_api.MovieDbApiService
 import com.varunbarad.popularmovies.model.MovieStub
@@ -40,7 +38,7 @@ import io.reactivex.subjects.Subject
  */
 private const val ACCEPTABLE_DELAY = 10 * 60 * 1000
 
-class MoviesListFragment : Fragment(), ListItemClickListener {
+class MoviesListFragment : Fragment() {
     private lateinit var fragmentInteractionEmitter: Subject<FragmentInteractionEvent>
     private val disposable: CompositeDisposable = CompositeDisposable()
 
@@ -49,7 +47,7 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     }
 
     private lateinit var dataBinding: FragmentMoviesListBinding
-    private var moviesAdapter: MoviesAdapter? = null
+    private var moviesAdapter: MoviesListAdapter? = null
 
     private var sortOrder: String = ""
     private var sortCriteriaEntries: Array<String> = emptyArray()
@@ -181,13 +179,6 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
         super.onDestroy()
     }
 
-    override fun onItemClick(position: Int) {
-        val movie = this.moviesAdapter?.movies?.get(position)
-        if (movie != null) {
-            this.fragmentInteractionEmitter.onNext(FragmentInteractionEvent.OpenMovieDetailsEvent(movie))
-        }
-    }
-
     private fun fetchPopularMovies() {
         this.showProgress()
 
@@ -295,7 +286,9 @@ class MoviesListFragment : Fragment(), ListItemClickListener {
     }
 
     private fun showMovies(movies: List<MovieStub>) {
-        this.moviesAdapter = MoviesAdapter(movies, this)
+        this.moviesAdapter = MoviesListAdapter(movies) {
+            this.fragmentInteractionEmitter.onNext(FragmentInteractionEvent.OpenMovieDetailsEvent(it))
+        }
         this.dataBinding.recyclerViewMovies.adapter = this.moviesAdapter
 
         this.dataBinding.placeholderProgress
